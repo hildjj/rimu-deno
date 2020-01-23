@@ -3,42 +3,24 @@
   Run 'node rimu.js --help' for details.
 */
 
-import * as fs from 'fs'
-import * as path from 'path'
-import * as rimu from 'rimu'
+
+import { existsSync, readFileStrSync, writeFileStrSync } from 'https://deno.land/std/fs/mod.ts';
+import { resolve } from 'https://deno.land/std/path/mod.ts';
+import * as rimu from './rimu.ts';
 
 const VERSION = '11.1.4'
 const STDIN = '/dev/stdin'
-const HOME_DIR = process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME']
-const RIMURC = path.resolve(HOME_DIR || '', '.rimurc')
+const HOME_DIR = Deno.env((Deno.build.os === 'win') ? 'USERPROFILE' : 'HOME')
+const RIMURC = resolve(HOME_DIR || '', '.rimurc')
 
 // Helpers.
 function die(message: string): void {
   console.error(message)
-  process.exit(1)
+  Deno.exit(1)
 }
 
 function readResourceFile(name: string): string {
-  return require(`./resources/${name}`).default
-}
-
-function importLayoutFile(name: string): string {
-  // DEPRECATED as of 11.0.0.
-  // Attempt to read header or footer file from external module `rimu-<layout-name>-layout`.
-  // Extract layout name and header/footer from the file `name`.
-  let match = name.match(/^(.+?)-(header|footer).rmu$/)!
-  let result = ''
-  try {
-    // Kludge to force Webpack to ignore the dynamic require().
-    result = eval(`require('rimu-${match[1]}-layout')['${match[2]}']`) // tslint:disable-line no-eval
-  }
-  catch {
-    die(`missing --layout: ${match[1]}`)
-  }
-  if (result === undefined) {
-    die(`--layout ${match[1]}: missing ${match[2]}`)
-  }
-  return result
+  return readFileStrSync(`./src/resources/${name}`)
 }
 
 let safe_mode = 0
@@ -49,31 +31,30 @@ let prepend_files: string[] = []
 let pass = false
 
 // Skip executable and script paths.
-process.argv.shift(); // Skip executable path.
-process.argv.shift(); // Skip rimuc script path.
+let argv = [...Deno.args]
 
 // Parse command-line options.
 let prepend = ''
 let outfile: string | undefined
 let arg: string | undefined
 outer:
-while (!!(arg = process.argv.shift())) {
+while (!!(arg = argv.shift())) {
   switch (arg) {
     case '--help':
     case '-h':
       console.log('\n' + readResourceFile('manpage.txt'))
-      process.exit()
+      Deno.exit()
       break
     case '--version':
       console.log(VERSION)
-      process.exit()
+      Deno.exit()
       break
     case '--lint': // Deprecated in Rimu 10.0.0
     case '-l':
       break
     case '--output':
     case '-o':
-      outfile = process.argv.shift()
+      outfile = argv.shift()
       if (!outfile) {
         die('missing --output file name')
       }
@@ -83,10 +64,10 @@ while (!!(arg = process.argv.shift())) {
       break
     case '--prepend':
     case '-p':
-      prepend += process.argv.shift() + '\n'
+      prepend += argv.shift() + '\n'
       break
     case '--prepend-file':
-      let prepend_file = process.argv.shift()
+      let prepend_file = argv.shift()
       if (!prepend_file) {
         die('missing --prepend-file file name')
       }
@@ -97,14 +78,14 @@ while (!!(arg = process.argv.shift())) {
       break
     case '--safe-mode':
     case '--safeMode':  // Deprecated in Rimu 7.1.0.
-      safe_mode = parseInt(process.argv.shift() || '99', 10)
+      safe_mode = parseInt(argv.shift() || '99', 10)
       if (safe_mode < 0 || safe_mode > 15) {
         die('illegal --safe-mode option value')
       }
       break
     case '--html-replacement':
     case '--htmlReplacement': // Deprecated in Rimu 7.1.0.
-      html_replacement = process.argv.shift()
+      html_replacement = argv.shift()
       break
     // Styling macro definitions shortcut options.
     case '--highlightjs':
@@ -120,12 +101,12 @@ while (!!(arg = process.argv.shift())) {
     case '--custom-toc':
     case '--header-ids':
     case '--header-links':
-      let macro_value = ['--lang', '--title', '--theme'].indexOf(arg) > -1 ? process.argv.shift() : 'true'
+      let macro_value = ['--lang', '--title', '--theme'].indexOf(arg) > -1 ? argv.shift() : 'true'
       prepend += '{' + arg + '}=\'' + macro_value + '\'\n'
       break
     case '--layout':
     case '--styled-name': // Deprecated in Rimu 10.0.0
-      layout = process.argv.shift() || ''
+      layout = argv.shift() || ''
       if (!layout) {
         die('missing --layout')
       }
@@ -138,12 +119,12 @@ while (!!(arg = process.argv.shift())) {
       layout = 'sequel'
       break
     default:
-      process.argv.unshift(arg); // argv contains source file names.
+      argv.unshift(arg); // argv contains source file names.
       break outer
   }
 }
-// process.argv contains the list of source files.
-let files = process.argv
+// argv contains the list of source files.
+let files = argv
 if (files.length === 0) {
   files.push(STDIN)
 }
@@ -159,7 +140,7 @@ if (layout !== '') {
   files.push(`${RESOURCE_TAG}${layout}-footer.rmu`)
 }
 // Prepend $HOME/.rimurc file if it exists.
-if (!no_rimurc && fs.existsSync(RIMURC)) {
+if (!no_rimurc && existsSync(RIMURC)) {
   prepend_files.unshift(RIMURC)
 }
 if (prepend !== '') {
@@ -180,12 +161,7 @@ for (let infile of files) {
   let source = ''
   if (infile.startsWith(RESOURCE_TAG)) {
     infile = infile.substr(RESOURCE_TAG.length)
-    if (['classic', 'flex', 'sequel', 'plain', 'v8'].indexOf(layout) >= 0) {
-      source = readResourceFile(infile)
-    }
-    else {
-      source = importLayoutFile(infile)
-    }
+    source = readResourceFile(infile)
     options.safeMode = 0  // Resources are trusted.
   }
   else if (infile === PREPEND) {
@@ -193,11 +169,11 @@ for (let infile of files) {
     options.safeMode = 0  // --prepend options are trusted.
   }
   else {
-    if (!fs.existsSync(infile)) {
+    if (!existsSync(infile)) {
       die('source file does not exist: ' + infile)
     }
     try {
-      source = fs.readFileSync(infile).toString()
+      source = readFileStrSync(infile).toString()
     } catch (e) {
       die('source file permission denied: ' + infile)
     }
@@ -226,11 +202,11 @@ for (let infile of files) {
 }
 output = output.trim()
 if (!outfile || outfile === '-') {
-  process.stdout.write(output)
+  Deno.stdout.writeSync(new TextEncoder().encode(output))
 }
 else {
-  fs.writeFileSync(outfile, output)
+  writeFileStrSync(outfile, output)
 }
 if (errors) {
-  process.exit(1)
+  Deno.exit(1)
 }
