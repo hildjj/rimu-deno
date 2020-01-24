@@ -1,13 +1,13 @@
-import * as Options from './options.ts'
-import * as Utils from './utils.ts'
+import * as Options from "./options.ts";
+import * as Utils from "./utils.ts";
 
 export interface Definition {
-  match: RegExp
-  replacement: string
-  filter?: (match: RegExpExecArray) => string
+  match: RegExp;
+  replacement: string;
+  filter?: (match: RegExpExecArray) => string;
 }
 
-export let defs: Definition[]  // Mutable definitions initialized by DEFAULT_DEFS.
+export let defs: Definition[]; // Mutable definitions initialized by DEFAULT_DEFS.
 
 const DEFAULT_DEFS: Definition[] = [
   // Begin match with \\? to allow the replacement to be escaped.
@@ -20,12 +20,12 @@ const DEFAULT_DEFS: Definition[] = [
   {
     match: /\\?<<#([a-zA-Z][\w\-]*)>>/g,
     replacement: '<span id="$1"></span>',
-    filter: function (match: RegExpExecArray): string {
+    filter: function(match: RegExpExecArray): string {
       if (Options.skipBlockAttributes()) {
-        return ''
+        return "";
       }
       // Default (non-filter) replacement processing.
-      return Utils.replaceMatch(match, this.replacement)
+      return Utils.replaceMatch(match, this.replacement);
     }
   },
 
@@ -82,10 +82,10 @@ const DEFAULT_DEFS: Definition[] = [
   // Match HTML comment or HTML tag.
   // $1 = tag, $2 = tag name
   {
-    match: /\\?(<!--(?:[^<>&]*)?-->|<\/?([a-z][a-z0-9]*)(?:\s+[^<>&]+)?>)/ig,
-    replacement: '',
-    filter: function (match: RegExpExecArray): string {
-      return Options.htmlSafeModeFilter(match[1]) // Matched HTML comment or inline tag.
+    match: /\\?(<!--(?:[^<>&]*)?-->|<\/?([a-z][a-z0-9]*)(?:\s+[^<>&]+)?>)/gi,
+    replacement: "",
+    filter: function(match: RegExpExecArray): string {
+      return Options.htmlSafeModeFilter(match[1]); // Matched HTML comment or inline tag.
     }
   },
 
@@ -105,16 +105,16 @@ const DEFAULT_DEFS: Definition[] = [
   // Character entity.
   {
     match: /\\?(&[\w#][\w]+;)/g,
-    replacement: '',
-    filter: function (match: RegExpExecArray): string {
-      return match[1]   // Pass the entity through verbatim.
+    replacement: "",
+    filter: function(match: RegExpExecArray): string {
+      return match[1]; // Pass the entity through verbatim.
     }
   },
 
   // Line-break (space followed by \ at end of line).
   {
     match: /[\\ ]\\(\n|$)/g,
-    replacement: '<br>$1'
+    replacement: "<br>$1"
   },
 
   // This hack ensures backslashes immediately preceding closing code quotes are rendered
@@ -123,37 +123,40 @@ const DEFAULT_DEFS: Definition[] = [
   // preceding the closing quote with itself.
   {
     match: /(\S\\)(?=`)/g,
-    replacement: '$1'
+    replacement: "$1"
   },
 
   // This hack ensures underscores within words rendered verbatim and are not treated as
   // underscore emphasis quotes (GFM behaviour).
   {
     match: /([a-zA-Z0-9]_)(?=[a-zA-Z0-9])/g,
-    replacement: '$1'
-  },
-]
+    replacement: "$1"
+  }
+];
 
 // Reset definitions to defaults.
 export function init(): void {
-  defs = DEFAULT_DEFS.map(def => Utils.copy(def))
+  defs = DEFAULT_DEFS.map(def => Utils.copy(def));
 }
 
 // Update existing or add new replacement definition.
-export function setDefinition(regexp: string, flags: string, replacement: string): void {
+export function setDefinition(
+  regexp: string,
+  flags: string,
+  replacement: string
+): void {
   if (!/g/.test(flags)) {
-    flags += 'g'
+    flags += "g";
   }
   for (let def of defs) {
     if (def.match.source === regexp) {
       // Update existing definition.
       // Flag properties are read-only so have to create new RegExp.
-      def.match = new RegExp(regexp, flags)
-      def.replacement = replacement
-      return
+      def.match = new RegExp(regexp, flags);
+      def.replacement = replacement;
+      return;
     }
   }
   // Append new definition to end of defs list (custom definitons have lower precedence).
-  defs.push({ match: new RegExp(regexp, flags), replacement: replacement })
+  defs.push({ match: new RegExp(regexp, flags), replacement: replacement });
 }
-

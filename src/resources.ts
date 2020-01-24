@@ -1,6 +1,6 @@
 // Generated automatically from resource files. Do not edit.
 export let resources: { [name: string]: string } = {
-  'classic-header.rmu': String.raw`/*
+  "classic-header.rmu": String.raw`/*
   Used by rimuc \x60--layout classic\x60 option.
 */
 
@@ -573,9 +573,9 @@ hljs.initHighlightingOnLoad();
 </div>
 
 <div id="article">`,
-  'plain-footer.rmu': String.raw`</body>
+  "plain-footer.rmu": String.raw`</body>
 </html>`,
-  'manpage.txt': String.raw`NAME
+  "manpage.txt": String.raw`NAME
   rimuc - convert Rimu source to HTML
 
 SYNOPSIS
@@ -731,7 +731,7 @@ PREDEFINED MACROS
   --header-ids       Set to a non-blank value to generate h1, h2
                      and h3 header id attributes.
   _______________________________________________________________`,
-  'v8-header.rmu': String.raw`/*
+  "v8-header.rmu": String.raw`/*
   Used by rimuc \x60--layout v8\x60 option.
   DEPRECATED: This layout is no longer maintained, for Rimu version 8 compatibility.
   Styled using Bootstrap.
@@ -1068,7 +1068,7 @@ PREDEFINED MACROS
 </div>
 
 <div id="contents">`,
-  'classic-footer.rmu': String.raw`/*
+  "classic-footer.rmu": String.raw`/*
   Used by rimuc.js --styled option.
 */
 
@@ -1154,7 +1154,7 @@ window.onclick = function(event) {
 
 </body>
 </html>`,
-  'flex-header.rmu': String.raw`/*
+  "flex-header.rmu": String.raw`/*
   Used by rimuc \x60--layout flex\x60 option.
 */
 
@@ -1734,7 +1734,7 @@ hljs.initHighlightingOnLoad();
 </div>
 
 <div id="article">`,
-  'flex-footer.rmu': String.raw`/*
+  "flex-footer.rmu": String.raw`/*
   Used by rimuc.js --styled option.
 */
 
@@ -1812,7 +1812,7 @@ document.onclick = function(event) {
 
 </body>
 </html>`,
-  'sequel-header.rmu': String.raw`/*
+  "sequel-header.rmu": String.raw`/*
   Used by rimuc \x60--layout sequel\x60 option.
 */
 
@@ -2406,7 +2406,7 @@ hljs.initHighlightingOnLoad();
 
 <div id="main">
 <div id="article">`,
-  'plain-header.rmu': String.raw`/*
+  "plain-header.rmu": String.raw`/*
   Used by rimuc \x60--layout plain\x60 option.
 */
 
@@ -2426,7 +2426,7 @@ hljs.initHighlightingOnLoad();
 {--head}
 </head>
 <body>`,
-  'v8-footer.rmu': String.raw`/*
+  "v8-footer.rmu": String.raw`/*
   Used by rimuc \x60--layout v8\x60 option.
   DEPRECATED: This layout is no longer maintained, for Rimu version 8 compatibility.
 */
@@ -2518,7 +2518,7 @@ window.onclick = function(event) {
 
 </body>
 </html>`,
-  'sequel-footer.rmu': String.raw`/*
+  "sequel-footer.rmu": String.raw`/*
   Used by rimuc \x60--layout sequel\x60 option.
 */
 
@@ -2607,5 +2607,5 @@ function appendTocEntry(heading) {
 </script>
 
 </body>
-</html>`,
+</html>`
 };
