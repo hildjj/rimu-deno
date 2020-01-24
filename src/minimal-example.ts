@@ -4,4 +4,4 @@
 
 import * as rimu from "./rimu.ts"
 
-console.log(rimu.render("Hello *Rimu*!", { safeMode: 1 }));
+console.log(rimu.render("Hello *Rimu*!"));
