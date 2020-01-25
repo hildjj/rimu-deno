@@ -16,15 +16,19 @@ following exceptions:
 - Does not support deprecated _Imported Layouts_.
 
 
-## Usage
+## API
 Example usage:
 
 ``` typescript
-import * as rimu from "./rimu.ts"
+import * as rimu from "https://raw.github.com/srackham/rimu-deno/master/src/rimu.ts";
 
 console.log(rimu.render("Hello *Rimu*!"));
 ```
 
+Save the above code as file `minimal-example.ts` then run it using:
+
+    deno minimal-example.ts
+    
 See also Rimu
 [API documentation](https://srackham.github.io/rimu/reference.html#api).
 
@@ -36,11 +40,13 @@ command](https://srackham.github.io/rimu/reference.html#rimuc-command) is
 
 Run it using e.g.
 
-    echo 'Hello _World_!'| deno --allow-env --allow-read src/rimuc.ts
+    deno --allow-env --allow-read https://raw.github.com/srackham/rimu-deno/master/src/rimuc.ts --help
+
+**NOTE**: Include the `--allow-write` Deno option if you are writing an output file.
 
 
 ## Building
-No explicit build required, just import and go.
+No explicit build setp is required, just import or run the TypeScript URL.
 
 
 ## Learn more about Rimu
@@ -50,8 +56,8 @@ Playground](http://srackham.github.io/rimu/rimuplayground.html).
 
 
 ## Implementation
-The Deno port is built using TypeScript source code from the [canonical Rimu
-implementation](https://github.com/srackham/rimu) with the following minor
+The Deno Rimu port is built using the TypeScript source code from the [canonical
+Rimu implementation](https://github.com/srackham/rimu) with the following minor
 modifications:
 
 1. An explicit `.ts` extension was added to all TypeScript import and export statements
