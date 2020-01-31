@@ -11,7 +11,7 @@ import { resolve } from "https://deno.land/std/path/mod.ts";
 import { resources } from "./resources.ts";
 import * as rimu from "./rimu.ts";
 
-const VERSION = "11.1.4";
+const VERSION = "11.1.8";
 const STDIN = "/dev/stdin";
 const HOME_DIR = Deno.env(Deno.build.os === "win" ? "USERPROFILE" : "HOME");
 const RIMURC = resolve(HOME_DIR || "", ".rimurc");
