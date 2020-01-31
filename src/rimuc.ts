@@ -47,6 +47,8 @@ let outfile: string | undefined;
 let arg: string | undefined;
 outer: while (!!(arg = argv.shift())) {
   switch (arg) {
+    case "--": // Ignore this option (see https://github.com/denoland/deno/issues/3795).
+      break;
     case "--help":
     case "-h":
       console.log("\n" + readResourceFile("manpage.txt"));
