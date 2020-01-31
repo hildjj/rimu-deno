@@ -52,6 +52,11 @@ tag: test
 	echo tag: $$tag
 	git tag -a -m $$tag $$tag
 
+.PHONY: install
+install: test
+	# Generate rimudeno executable wrapper for rimuc CLI.
+	deno install rimudeno ./src/rimuc.ts --allow-env --allow-read --allow-write
+
 .PHONY: push
 push:
 	git push -u --tags origin master
