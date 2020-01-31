@@ -29,20 +29,23 @@ Save the above code as file `minimal-example.ts` then run it using:
 
     deno minimal-example.ts
     
-See also Rimu
-[API documentation](https://srackham.github.io/rimu/reference.html#api).
+See also the [Rimu API
+documentation](https://srackham.github.io/rimu/reference.html#api).
 
 
 ## CLI command
 The [Rimu CLI
 command](https://srackham.github.io/rimu/reference.html#rimuc-command) is
-`rimuc.ts`.
+implemented by `rimuc.ts`.
 
-Run it using e.g.
+Use the Deno `install` command to install an executable CLI wrapper. The
+following example creates the executable `$HOME/.deno/bin/rimudeno`:
 
-    deno --allow-env --allow-read https://raw.github.com/srackham/rimu-deno/master/src/rimuc.ts --help
+	deno install rimudeno https://raw.github.com/srackham/rimu-deno/master/src/rimuc.ts --allow-env --allow-read --allow-write
 
-**NOTE**: Include the `--allow-write` Deno option if you are writing an output file.
+Run it with e.g.
+
+    $HOME/.deno/bin/rimudeno --version
 
 
 ## Building
