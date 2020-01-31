@@ -10,6 +10,7 @@ SHELL := bash
 .ONESHELL:
 .SILENT:
 
+SRC_FILES = src/*.ts
 RESOURCES_SRC = src/resources.ts
 RESOURCE_FILES = src/resources/*
 
@@ -24,6 +25,7 @@ update:
 	for f in $$(find ../rimu/src/rimu -type f -name '*.ts'); do
 		sed -E "s/^((import|export).*from '.*)'/\1.ts'/" $$f > src/$$(basename $$f)
 	done
+	deno fmt $(SRC_FILES)
 
 $(RESOURCES_SRC): $(RESOURCE_FILES)
 	# Build resources.ts containing rimuc resource files.
@@ -33,10 +35,11 @@ $(RESOURCES_SRC): $(RESOURCE_FILES)
 	for f in $^; do
 		echo -n "  '$$(basename $$f)': " >> $@
 		data=$$(cat $$f)
-		data=$${data//\`/\\x60}
+		data=$${data//\`/\\x60} # Escape backticks (unescaped at runtime).
 		echo "String.raw\`$$data\`," >> $@
 	done
 	echo "};" >> $@
+	deno fmt $(RESOURCES_SRC)
 
 .PHONY: tag
 tag: test
