@@ -38,13 +38,11 @@ let no_rimurc = false;
 let prepend_files: string[] = [];
 let pass = false;
 
-// Skip executable and script paths.
-let argv = [...Deno.args];
-
 // Parse command-line options.
 let prepend = "";
 let outfile: string | undefined;
 let arg: string | undefined;
+let argv = [...Deno.args];
 outer: while (!!(arg = argv.shift())) {
   switch (arg) {
     case "--": // Ignore this option (see https://github.com/denoland/deno/issues/3795).
