@@ -35,6 +35,7 @@ $(RESOURCES_SRC): $(RESOURCE_FILES)
 	for f in $^; do
 		echo -n "  '$$(basename $$f)': " >> $@
 		data=$$(cat $$f)
+		data=$${data//\\/\\x5C} # Escape backslash (unescaped at runtime).
 		data=$${data//\`/\\x60} # Escape backticks (unescaped at runtime).
 		echo "String.raw\`$$data\`," >> $@
 	done

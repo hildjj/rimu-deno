@@ -2,14 +2,10 @@
   Command-lne app to convert Rimu source to HTML.
 */
 
-import {
-  existsSync,
-  readFileStrSync,
-  writeFileStrSync
-} from "https://deno.land/std/fs/mod.ts";
-import { resolve } from "https://deno.land/std/path/mod.ts";
-import { resources } from "./resources.ts";
-import * as rimu from "./rimu.ts";
+import { existsSync, readFileStrSync, writeFileStrSync } from "https://deno.land/std/fs/mod.ts"
+import { resolve } from "https://deno.land/std/path/mod.ts"
+import { resources } from "./resources.ts"
+import * as rimu from "./rimu.ts"
 
 const VERSION = "11.1.8";
 const STDIN = "/dev/stdin";
@@ -23,12 +19,14 @@ function die(message: string): void {
 }
 
 function readResourceFile(name: string): string {
-  // return readFileStrSync(`./src/resources/${name}`)
   if (!(name in resources)) {
     die(`missing resource: ${name}`);
   }
   // Restore all backticks.
-  return resources[name].split("\\x60").join("`");
+  let result = resources[name].split("\\x60").join("`");
+  // Restore all backslashes.
+  result = resources[name].split("\\x5C").join("\\");
+  return result;
 }
 
 let safe_mode = 0;
