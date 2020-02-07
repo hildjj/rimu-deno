@@ -1,10 +1,9 @@
 A port of the [Rimu Markup language](https://srackham.github.io/rimu/) to the
 [Deno](https://deno.land/) runtime.
 
-**CAUTION: This project is experimental. Deno is still under development and as
-of writing has not reached 1.0.**
+**CAUTION: This project is in an early stage of development.
 
-Tested with Deno 0.30.0
+Tested with Deno 0.32.0
 
 
 ## Features
@@ -20,7 +19,7 @@ following exceptions:
 Example usage:
 
 ``` typescript
-import * as rimu from "https://raw.github.com/srackham/rimu-deno/master/src/rimu.ts";
+import * as rimu from "https://raw.github.com/srackham/rimu-deno/master/mod.ts";
 
 console.log(rimu.render("Hello *Rimu*!"));
 ```
