@@ -10,7 +10,7 @@ SHELL := bash
 .ONESHELL:
 .SILENT:
 
-SRC_FILES = src/*.ts
+SRC_FILES = mod.ts src/*.ts
 RESOURCES_SRC = src/resources.ts
 RESOURCE_FILES = src/resources/*
 
