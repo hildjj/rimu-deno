@@ -210,7 +210,8 @@ function matchItem(reader: Io.Reader): ItemInfo | null {
       }
       item.match = match;
       item.def = def;
-      item.id = match[match.length - 2]; // The second to last match group is the list ID.
+      item.id = match[match.length -
+        2]; // The second to last match group is the list ID.
       return item;
     }
   }

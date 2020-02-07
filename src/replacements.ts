@@ -7,7 +7,8 @@ export interface Definition {
   filter?: (match: RegExpExecArray) => string;
 }
 
-export let defs: Definition[]; // Mutable definitions initialized by DEFAULT_DEFS.
+export let defs:
+  Definition[]; // Mutable definitions initialized by DEFAULT_DEFS.
 
 const DEFAULT_DEFS: Definition[] = [
   // Begin match with \\? to allow the replacement to be escaped.
@@ -19,7 +20,7 @@ const DEFAULT_DEFS: Definition[] = [
   // Anchor: <<#id>>
   {
     match: /\\?<<#([a-zA-Z][\w\-]*)>>/g,
-    replacement: '<span id="$1"></span>',
+    replacement: "<span id=\"$1\"></span>",
     filter: function(match: RegExpExecArray): string {
       if (Options.skipBlockAttributes()) {
         return "";
@@ -28,56 +29,48 @@ const DEFAULT_DEFS: Definition[] = [
       return Utils.replaceMatch(match, this.replacement);
     }
   },
-
   // Image: <image:src|alt>
   // src = $1, alt = $2
   {
     match: /\\?<image:([^\s|]+)\|([^]*?)>/g,
-    replacement: '<img src="$1" alt="$2">'
+    replacement: "<img src=\"$1\" alt=\"$2\">"
   },
-
   // Image: <image:src>
   // src = $1, alt = $1
   {
     match: /\\?<image:([^\s|]+?)>/g,
-    replacement: '<img src="$1" alt="$1">'
+    replacement: "<img src=\"$1\" alt=\"$1\">"
   },
-
   // Image: ![alt](url)
   // alt = $1, url = $2
   {
     match: /\\?!\[([^[]*?)]\((\S+?)\)/g,
-    replacement: '<img src="$2" alt="$1">'
+    replacement: "<img src=\"$2\" alt=\"$1\">"
   },
-
   // Email: <address|caption>
   // address = $1, caption = $2
   {
     match: /\\?<(\S+@[\w.\-]+)\|([^]+?)>/g,
-    replacement: '<a href="mailto:$1">$$2</a>'
+    replacement: "<a href=\"mailto:$1\">$$2</a>"
   },
-
   // Email: <address>
   // address = $1, caption = $1
   {
     match: /\\?<(\S+@[\w.\-]+)>/g,
-    replacement: '<a href="mailto:$1">$1</a>'
+    replacement: "<a href=\"mailto:$1\">$1</a>"
   },
-
   // Link: [caption](url)
   // caption = $1, url = $2
   {
     match: /\\?\[([^[]*?)]\((\S+?)\)/g,
-    replacement: '<a href="$2">$$1</a>'
+    replacement: "<a href=\"$2\">$$1</a>"
   },
-
   // Link: <url|caption>
   // url = $1, caption = $2
   {
     match: /\\?<(\S+?)\|([^]*?)>/g,
-    replacement: '<a href="$1">$$2</a>'
+    replacement: "<a href=\"$1\">$$2</a>"
   },
-
   // HTML inline tags.
   // Match HTML comment or HTML tag.
   // $1 = tag, $2 = tag name
@@ -85,23 +78,21 @@ const DEFAULT_DEFS: Definition[] = [
     match: /\\?(<!--(?:[^<>&]*)?-->|<\/?([a-z][a-z0-9]*)(?:\s+[^<>&]+)?>)/gi,
     replacement: "",
     filter: function(match: RegExpExecArray): string {
-      return Options.htmlSafeModeFilter(match[1]); // Matched HTML comment or inline tag.
+      return Options
+        .htmlSafeModeFilter(match[1]); // Matched HTML comment or inline tag.
     }
   },
-
   // Link: <url>
   // url = $1
   {
     match: /\\?<([^|\s]+?)>/g,
-    replacement: '<a href="$1">$1</a>'
+    replacement: "<a href=\"$1\">$1</a>"
   },
-
   // Auto-encode (most) raw HTTP URLs as links.
   {
     match: /\\?((?:http|https):\/\/[^\s"']*[A-Za-z0-9/#])/g,
-    replacement: '<a href="$1">$1</a>'
+    replacement: "<a href=\"$1\">$1</a>"
   },
-
   // Character entity.
   {
     match: /\\?(&[\w#][\w]+;)/g,
@@ -110,13 +101,11 @@ const DEFAULT_DEFS: Definition[] = [
       return match[1]; // Pass the entity through verbatim.
     }
   },
-
   // Line-break (space followed by \ at end of line).
   {
     match: /[\\ ]\\(\n|$)/g,
     replacement: "<br>$1"
   },
-
   // This hack ensures backslashes immediately preceding closing code quotes are rendered
   // verbatim (Markdown behaviour).
   // Works by finding escaped closing code quotes and replacing the backslash and the character
@@ -125,7 +114,6 @@ const DEFAULT_DEFS: Definition[] = [
     match: /(\S\\)(?=`)/g,
     replacement: "$1"
   },
-
   // This hack ensures underscores within words rendered verbatim and are not treated as
   // underscore emphasis quotes (GFM behaviour).
   {

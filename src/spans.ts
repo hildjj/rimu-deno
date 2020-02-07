@@ -91,7 +91,10 @@ function fragQuote(fragment: Fragment): Fragment[] {
   if (!def.spans) {
     // Spans are disabled so render the quoted text verbatim.
     quoted = Utils.replaceSpecialChars(quoted);
-    quoted = quoted.replace(/\u0000/g, "\u0001"); // Flag replacements as verbatim.
+    quoted = quoted.replace(
+      /\u0000/g,
+      "\u0001"
+    ); // Flag replacements as verbatim.
     result.push({ text: quoted, done: true });
   } else {
     // Recursively process the quoted text.
@@ -184,7 +187,10 @@ function fragReplacement(
   }
   result.push({ text: replacement, done: true, verbatim: match[0] });
   // Recursively process the remaining text.
-  result.push.apply(result, fragReplacement({ text: after, done: false }, def));
+  result.push.apply(
+    result,
+    fragReplacement({ text: after, done: false }, def)
+  );
   return result;
 }
 

@@ -43,7 +43,8 @@ let prepend = "";
 let outfile: string | undefined;
 let arg: string | undefined;
 let argv = [...Deno.args];
-outer: while (!!(arg = argv.shift())) {
+outer:
+while (!!(arg = argv.shift())) {
   switch (arg) {
     case "--": // Ignore this option (see https://github.com/denoland/deno/issues/3795).
       break;
@@ -108,10 +109,9 @@ outer: while (!!(arg = argv.shift())) {
     case "--custom-toc":
     case "--header-ids":
     case "--header-links":
-      let macro_value =
-        ["--lang", "--title", "--theme"].indexOf(arg) > -1
-          ? argv.shift()
-          : "true";
+      let macro_value = ["--lang", "--title", "--theme"].indexOf(arg) > -1
+        ? argv.shift()
+        : "true";
       prepend += "{" + arg + "}='" + macro_value + "'\n";
       break;
     case "--layout":

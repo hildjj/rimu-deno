@@ -91,11 +91,19 @@ export function updateOptions(options: RenderOptions): void {
         return;
     }
   }
-  if ("callback" in options) callback = options.callback; // Install callback first to ensure option errors are logged.
+  if ("callback" in options) {
+    callback = options
+      .callback; // Install callback first to ensure option errors are logged.
+  }
   if ("reset" in options) setReset(options.reset); // Reset takes priority.
-  if ("callback" in options) callback = options.callback; // Install callback again in case it has been reset.
+  if ("callback" in options) {
+    callback = options
+      .callback; // Install callback again in case it has been reset.
+  }
   if ("safeMode" in options) setSafeMode(options.safeMode);
-  if ("htmlReplacement" in options) setHtmlReplacement(options.htmlReplacement);
+  if ("htmlReplacement" in options) {
+    setHtmlReplacement(options.htmlReplacement);
+  }
 }
 
 // Set named option value.

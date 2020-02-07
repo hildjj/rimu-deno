@@ -113,9 +113,11 @@ export namespace BlockAttributes {
     // class names = $1, id = $2, css-properties = $3, html-attributes = $4, block-options = $5
     let text = match[0];
     text = replaceInline(text, { macros: true });
-    let m = /^\\?\.((?:\s*[a-zA-Z][\w\-]*)+)*(?:\s*)?(#[a-zA-Z][\w\-]*\s*)?(?:\s*)?(?:"(.+?)")?(?:\s*)?(\[.+])?(?:\s*)?([+-][ \w+-]+)?$/.exec(
-      text
-    );
+    let m =
+      /^\\?\.((?:\s*[a-zA-Z][\w\-]*)+)*(?:\s*)?(#[a-zA-Z][\w\-]*\s*)?(?:\s*)?(?:"(.+?)")?(?:\s*)?(\[.+])?(?:\s*)?([+-][ \w+-]+)?$/
+        .exec(
+          text
+        );
     if (!m) {
       return false;
     }

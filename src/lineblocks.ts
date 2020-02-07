@@ -11,7 +11,8 @@ export interface Definition {
   match: RegExp;
   replacement?: string;
   name?: string; // Optional unique identifier.
-  verify?: (match: RegExpExecArray, reader: Io.Reader) => boolean; // Additional match verification checks.
+  verify?: (match: RegExpExecArray, reader: Io.Reader)
+  => boolean; // Additional match verification checks.
   filter?: (match: RegExpExecArray, reader: Io.Reader) => string;
 }
 
@@ -129,20 +130,20 @@ let defs: Definition[] = [
   // src = $1, alt = $2
   {
     match: /^\\?<image:([^\s|]+)\|([^]+?)>$/,
-    replacement: '<img src="$1" alt="$2">'
+    replacement: "<img src=\"$1\" alt=\"$2\">"
   },
   // Block image: <image:src>
   // src = $1, alt = $1
   {
     match: /^\\?<image:([^\s|]+?)>$/,
-    replacement: '<img src="$1" alt="$1">'
+    replacement: "<img src=\"$1\" alt=\"$1\">"
   },
   // DEPRECATED as of 3.4.0.
   // Block anchor: <<#id>>
   // id = $1
   {
     match: /^\\?<<#([a-zA-Z][\w\-]*)>>$/,
-    replacement: '<div id="$1"></div>',
+    replacement: "<div id=\"$1\"></div>",
     filter: function(match: RegExpExecArray, reader?: Io.Reader): string {
       if (Options.skipBlockAttributes()) {
         return "";
@@ -156,7 +157,8 @@ let defs: Definition[] = [
   // Syntax: .class-names #id [html-attributes] block-options
   {
     name: "attributes",
-    match: /^\\?\.[a-zA-Z#"\[+-].*$/, // A loose match because Block Attributes can contain macro references.
+    match:
+      /^\\?\.[a-zA-Z#"\[+-].*$/, // A loose match because Block Attributes can contain macro references.
     verify: function(match: RegExpExecArray): boolean {
       return BlockAttributes.parse(match);
     }
@@ -184,8 +186,11 @@ export function render(
 ): boolean {
   if (reader.eof()) Options.panic("premature eof");
   for (let def of defs) {
-    if (allowed.length > 0 && allowed.indexOf(def.name ? def.name : "") === -1)
+    if (allowed.length > 0 &&
+      allowed.indexOf(def.name ? def.name : "") === -1)
+    {
       continue;
+    }
     let match = def.match.exec(reader.cursor);
     if (match) {
       if (match[0][0] === "\\") {

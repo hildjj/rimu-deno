@@ -60,7 +60,8 @@ export function setValue(name: string, value: string, quote: string): void {
     try {
       value = eval(value); // tslint:disable-line no-eval
     } catch (e) {
-      Options.errorCallback(`illegal macro expression: ${e.message}: ${value}`);
+      Options
+        .errorCallback(`illegal macro expression: ${e.message}: ${value}`);
     }
   }
   for (let def of defs) {
@@ -77,7 +78,8 @@ export function setValue(name: string, value: string, quote: string): void {
 // Render macro invocations in text string.
 // Render Simple invocations first, followed by Parametized, Inclusion and Exclusion invocations.
 export function render(text: string, silent: boolean = false): string {
-  const MATCH_COMPLEX = /\\?{([\w\-]+)([!=|?](?:|[^]*?[^\\]))}/g; // Parametrized, Inclusion and Exclusion invocations.
+  const MATCH_COMPLEX =
+    /\\?{([\w\-]+)([!=|?](?:|[^]*?[^\\]))}/g; // Parametrized, Inclusion and Exclusion invocations.
   const MATCH_SIMPLE = /\\?{([\w\-]+)()}/g; // Simple macro invocation.
   let result = text;
   [MATCH_SIMPLE, MATCH_COMPLEX].forEach(find => {
@@ -133,7 +135,9 @@ export function render(text: string, silent: boolean = false): string {
               return match; // $0 is not a valid parameter name.
             }
             let param: string | undefined = paramsList[Number(p2) - 1];
-            param = param === undefined ? "" : param; // Unassigned parameters are replaced with a blank string.
+            param = param === undefined
+              ? ""
+              : param; // Unassigned parameters are replaced with a blank string.
             if (p3 !== undefined) {
               if (p3[0] === "\\") {
                 // Unescape escaped default parameter.
@@ -141,7 +145,10 @@ export function render(text: string, silent: boolean = false): string {
               } else {
                 if (param === "") {
                   param = p4; // Assign default parameter value.
-                  param = param.replace(/\\\$/g, "$"); // Unescape escaped $ characters in the default value.
+                  param = param.replace(
+                    /\\\$/g,
+                    "$"
+                  ); // Unescape escaped $ characters in the default value.
                 }
               }
             }

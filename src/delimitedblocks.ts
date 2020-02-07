@@ -6,7 +6,8 @@ import * as Utils from "./utils.ts";
 import { BlockAttributes } from "./utils.ts";
 
 /* tslint:disable:max-line-length */
-const MATCH_INLINE_TAG = /^(a|abbr|acronym|address|b|bdi|bdo|big|blockquote|br|cite|code|del|dfn|em|i|img|ins|kbd|mark|q|s|samp|small|span|strike|strong|sub|sup|time|tt|u|var|wbr)$/i;
+const MATCH_INLINE_TAG =
+  /^(a|abbr|acronym|address|b|bdi|bdo|big|blockquote|br|cite|code|del|dfn|em|i|img|ins|kbd|mark|q|s|samp|small|span|strike|strong|sub|sup|time|tt|u|var|wbr)$/i;
 /* tslint:enable:max-line-length */
 
 // Multi-line block element definition.
@@ -16,8 +17,10 @@ export interface Definition {
   closeMatch?: RegExp; // $1 (if defined) is appended to block content.
   openTag: string;
   closeTag: string;
-  verify?: (match: RegExpMatchArray) => boolean; // Additional match verification checks.
-  delimiterFilter?: (match: string[]) => string; // Process opening delimiter. Return any delimiter content.
+  verify?: (match: RegExpMatchArray)
+  => boolean; // Additional match verification checks.
+  delimiterFilter?: (match: string[])
+  => string; // Process opening delimiter. Return any delimiter content.
   contentFilter?: (
     text: string,
     match: string[],
@@ -26,7 +29,8 @@ export interface Definition {
   expansionOptions: Utils.ExpansionOptions;
 }
 
-export let defs: Definition[]; // Mutable definitions initialized by DEFAULT_DEFS.
+export let defs:
+  Definition[]; // Mutable definitions initialized by DEFAULT_DEFS.
 
 const DEFAULT_DEFS: Definition[] = [
   // Delimited blocks cannot be escaped with a backslash.
@@ -71,7 +75,8 @@ const DEFAULT_DEFS: Definition[] = [
   // Division block.
   {
     name: "division",
-    openMatch: /^\\?(\.{2,})([\w\s-]*)$/, // $1 is delimiter text, $2 is optional class names.
+    openMatch:
+      /^\\?(\.{2,})([\w\s-]*)$/, // $1 is delimiter text, $2 is optional class names.
     openTag: "<div>",
     closeTag: "</div>",
     expansionOptions: {
@@ -83,7 +88,8 @@ const DEFAULT_DEFS: Definition[] = [
   // Quote block.
   {
     name: "quote",
-    openMatch: /^\\?("{2,})([\w\s-]*)$/, // $1 is delimiter text, $2 is optional class names.
+    openMatch:
+      /^\\?("{2,})([\w\s-]*)$/, // $1 is delimiter text, $2 is optional class names.
     openTag: "<blockquote>",
     closeTag: "</blockquote>",
     expansionOptions: {
@@ -95,7 +101,8 @@ const DEFAULT_DEFS: Definition[] = [
   // Code block.
   {
     name: "code",
-    openMatch: /^\\?(-{2,}|`{2,})([\w\s-]*)$/, // $1 is delimiter text, $2 is optional class names.
+    openMatch:
+      /^\\?(-{2,}|`{2,})([\w\s-]*)$/, // $1 is delimiter text, $2 is optional class names.
     openTag: "<pre><code>",
     closeTag: "</code></pre>",
     expansionOptions: {
@@ -114,7 +121,8 @@ const DEFAULT_DEFS: Definition[] = [
     // Block starts with HTML comment, DOCTYPE directive or block-level HTML start or end tag.
     // $1 is first line of block.
     // $2 is the alphanumeric tag name.
-    openMatch: /^(<!--.*|<!DOCTYPE(?:\s.*)?|<\/?([a-z][a-z0-9]*)(?:[\s>].*)?)$/i,
+    openMatch:
+      /^(<!--.*|<!DOCTYPE(?:\s.*)?|<\/?([a-z][a-z0-9]*)(?:[\s>].*)?)$/i,
     closeMatch: /^$/, // Blank line or EOF.
     openTag: "",
     closeTag: "",
@@ -201,8 +209,10 @@ export function init(): void {
   defs = DEFAULT_DEFS.map(def => Utils.copy(def));
   // Copy definition object fields.
   defs.forEach(
-    (def, i) =>
-      (def.expansionOptions = Utils.copy(DEFAULT_DEFS[i].expansionOptions))
+    (
+      def,
+      i
+    ) => (def.expansionOptions = Utils.copy(DEFAULT_DEFS[i].expansionOptions))
   );
 }
 
@@ -215,8 +225,11 @@ export function render(
 ): boolean {
   if (reader.eof()) Options.panic("premature eof");
   for (let def of defs) {
-    if (allowed.length > 0 && allowed.indexOf(def.name ? def.name : "") === -1)
+    if (allowed.length > 0 &&
+      allowed.indexOf(def.name ? def.name : "") === -1)
+    {
       continue;
+    }
     let match = reader.cursor.match(def.openMatch);
     if (match) {
       // Escape non-paragraphs.
@@ -229,7 +242,9 @@ export function render(
         continue;
       }
       // Process opening delimiter.
-      let delimiterText = def.delimiterFilter ? def.delimiterFilter(match) : "";
+      let delimiterText = def.delimiterFilter
+        ? def.delimiterFilter(match)
+        : "";
       // Read block content into lines.
       let lines: string[] = [];
       if (delimiterText) {
@@ -267,7 +282,8 @@ export function render(
           opentag = BlockAttributes.inject(opentag);
         }
         if (expansionOptions.container) {
-          delete BlockAttributes.options.container; // Consume before recursion.
+          delete BlockAttributes.options
+            .container; // Consume before recursion.
           text = Api.render(text);
         } else {
           text = Utils.replaceInline(text, expansionOptions);
@@ -378,11 +394,22 @@ function macroDefContentFilter(
   match: string[],
   expansionOptions: Utils.ExpansionOptions
 ): string {
-  let quote = match[0][match[0].length - match[1].length - 1]; // The leading macro value quote character.
-  let name = (match[0].match(/^{([\w\-]+\??)}/) as RegExpMatchArray)[1]; // Extract macro name from opening delimiter.
-  text = text.replace(RegExp("(" + quote + ") *\\\\\\n", "g"), "$1\n"); // Unescape line-continuations.
-  text = text.replace(RegExp("(" + quote + " *[\\\\]+)\\\\\\n", "g"), "$1\n"); // Unescape escaped line-continuations.
-  text = Utils.replaceInline(text, expansionOptions); // Expand macro invocations.
+  let quote = match[0][match[0].length - match[1].length -
+    1]; // The leading macro value quote character.
+  let name = (match[0].match(/^{([\w\-]+\??)}/) as RegExpMatchArray)
+    [1]; // Extract macro name from opening delimiter.
+  text = text.replace(
+    RegExp("(" + quote + ") *\\\\\\n", "g"),
+    "$1\n"
+  ); // Unescape line-continuations.
+  text = text.replace(
+    RegExp("(" + quote + " *[\\\\]+)\\\\\\n", "g"),
+    "$1\n"
+  ); // Unescape escaped line-continuations.
+  text = Utils.replaceInline(
+    text,
+    expansionOptions
+  ); // Expand macro invocations.
   Macros.setValue(name, text, quote);
   return "";
 }
