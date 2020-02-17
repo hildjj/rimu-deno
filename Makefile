@@ -56,7 +56,7 @@ tag: test
 .PHONY: install
 install: test
 	# Generate rimudeno executable wrapper for rimuc CLI.
-	deno install rimudeno --allow-env --allow-read --allow-write ./src/rimuc.ts
+	deno install -f --allow-env --allow-read --allow-write rimudeno ./src/rimuc.ts
 
 .PHONY: push
 push:
