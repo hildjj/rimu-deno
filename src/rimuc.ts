@@ -2,8 +2,8 @@
   Command-lne app to convert Rimu source to HTML.
 */
 
-import { existsSync, readFileStrSync, writeFileStrSync } from "https://deno.land/std/fs/mod.ts"
-import { resolve } from "https://deno.land/std/path/mod.ts"
+import { existsSync, readFileStrSync, writeFileStrSync } from "https://deno.land/std@v0.33.0/fs/mod.ts"
+import { resolve } from "https://deno.land/std@v0.33.0/path/mod.ts"
 import { resources } from "./resources.ts"
 import * as rimu from "./rimu.ts"
 
