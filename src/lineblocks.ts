@@ -11,8 +11,7 @@ export interface Definition {
   match: RegExp;
   replacement?: string;
   name?: string; // Optional unique identifier.
-  verify?: (match: RegExpExecArray, reader: Io.Reader)
-  => boolean; // Additional match verification checks.
+  verify?: (match: RegExpExecArray, reader: Io.Reader) => boolean; // Additional match verification checks.
   filter?: (match: RegExpExecArray, reader: Io.Reader) => string;
 }
 
@@ -157,8 +156,7 @@ let defs: Definition[] = [
   // Syntax: .class-names #id [html-attributes] block-options
   {
     name: "attributes",
-    match:
-      /^\\?\.[a-zA-Z#"\[+-].*$/, // A loose match because Block Attributes can contain macro references.
+    match: /^\\?\.[a-zA-Z#"\[+-].*$/, // A loose match because Block Attributes can contain macro references.
     verify: function(match: RegExpExecArray): boolean {
       return BlockAttributes.parse(match);
     }

@@ -78,8 +78,7 @@ export function setValue(name: string, value: string, quote: string): void {
 // Render macro invocations in text string.
 // Render Simple invocations first, followed by Parametized, Inclusion and Exclusion invocations.
 export function render(text: string, silent: boolean = false): string {
-  const MATCH_COMPLEX =
-    /\\?{([\w\-]+)([!=|?](?:|[^]*?[^\\]))}/g; // Parametrized, Inclusion and Exclusion invocations.
+  const MATCH_COMPLEX = /\\?{([\w\-]+)([!=|?](?:|[^]*?[^\\]))}/g; // Parametrized, Inclusion and Exclusion invocations.
   const MATCH_SIMPLE = /\\?{([\w\-]+)()}/g; // Simple macro invocation.
   let result = text;
   [MATCH_SIMPLE, MATCH_COMPLEX].forEach(find => {

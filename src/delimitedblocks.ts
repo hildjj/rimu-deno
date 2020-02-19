@@ -17,10 +17,8 @@ export interface Definition {
   closeMatch?: RegExp; // $1 (if defined) is appended to block content.
   openTag: string;
   closeTag: string;
-  verify?: (match: RegExpMatchArray)
-  => boolean; // Additional match verification checks.
-  delimiterFilter?: (match: string[])
-  => string; // Process opening delimiter. Return any delimiter content.
+  verify?: (match: RegExpMatchArray) => boolean; // Additional match verification checks.
+  delimiterFilter?: (match: string[]) => string; // Process opening delimiter. Return any delimiter content.
   contentFilter?: (
     text: string,
     match: string[],
@@ -29,8 +27,7 @@ export interface Definition {
   expansionOptions: Utils.ExpansionOptions;
 }
 
-export let defs:
-  Definition[]; // Mutable definitions initialized by DEFAULT_DEFS.
+export let defs: Definition[]; // Mutable definitions initialized by DEFAULT_DEFS.
 
 const DEFAULT_DEFS: Definition[] = [
   // Delimited blocks cannot be escaped with a backslash.
@@ -75,8 +72,7 @@ const DEFAULT_DEFS: Definition[] = [
   // Division block.
   {
     name: "division",
-    openMatch:
-      /^\\?(\.{2,})([\w\s-]*)$/, // $1 is delimiter text, $2 is optional class names.
+    openMatch: /^\\?(\.{2,})([\w\s-]*)$/, // $1 is delimiter text, $2 is optional class names.
     openTag: "<div>",
     closeTag: "</div>",
     expansionOptions: {
@@ -88,8 +84,7 @@ const DEFAULT_DEFS: Definition[] = [
   // Quote block.
   {
     name: "quote",
-    openMatch:
-      /^\\?("{2,})([\w\s-]*)$/, // $1 is delimiter text, $2 is optional class names.
+    openMatch: /^\\?("{2,})([\w\s-]*)$/, // $1 is delimiter text, $2 is optional class names.
     openTag: "<blockquote>",
     closeTag: "</blockquote>",
     expansionOptions: {
@@ -101,8 +96,7 @@ const DEFAULT_DEFS: Definition[] = [
   // Code block.
   {
     name: "code",
-    openMatch:
-      /^\\?(-{2,}|`{2,})([\w\s-]*)$/, // $1 is delimiter text, $2 is optional class names.
+    openMatch: /^\\?(-{2,}|`{2,})([\w\s-]*)$/, // $1 is delimiter text, $2 is optional class names.
     openTag: "<pre><code>",
     closeTag: "</code></pre>",
     expansionOptions: {
