@@ -1,4 +1,4 @@
-import { desc, env, glob, quote, run, sh, task } from "file:///home/srackham/local/projects/drake/mod.ts"
+import { abort, desc, env, execute, glob, quote, run, sh, task } from "file:///home/srackham/local/projects/drake/mod.ts"
 
 env["--default-task"] = "test";
 const SRC_FILES = glob("mod.ts", "src/*.ts");
@@ -17,6 +17,16 @@ task("test", [RESOURCES_SRC], async function() {
     `);
 });
 
+desc("Fetch the latest Rimu source and add .ts extension to import and export statements for Deno")
+task("update",[], async function() {
+  await sh(`
+	for f in $(find ../rimu/src/rimu -type f -name '*.ts'); do
+		sed -E "s/^((import|export).*from '.*)'/\\1.ts'/" $f > src/$(basename $f)
+	done
+	`);
+  await execute("fmt")
+});
+
 desc("Build resources.ts containing rimuc resource files");
 task(RESOURCES_SRC, RESOURCE_FILES, async function() {
   await sh(`
@@ -33,6 +43,29 @@ task(RESOURCES_SRC, RESOURCE_FILES, async function() {
 	echo "};" >> ${RESOURCES_SRC}
 	deno fmt ${RESOURCES_SRC}
     `);
+});
+
+desc("Generate rimudeno executable wrapper for rimuc CLI")
+task("install",["test"], async function() {
+  await sh(`deno install -f --allow-env --allow-read --allow-write rimudeno ./src/rimuc.ts`);
+});
+
+desc("Create Git version tag. VERS is a valid semantic version number")
+task("tag",["test"], async function() {
+  if (!env.vers) {
+	abort("'vers' variable not set e.g. drake tag vers=1.0.0")
+  }
+  if (!/^\d+\.\d+\.\d+/.test(env.vers as string)) {
+	abort(`illegal semantic version number: ${env.vers}`)
+  }
+  const tag = `v${env.vers}`
+  console.log(`tag: ${tag}`)
+  await sh(`git tag -a -m ${tag} ${tag}`);
+});
+
+desc("Push changes to Github")
+task("push",["test"], async function() {
+  await sh(`git push -u --tags origin master`);
 });
 
 run();
