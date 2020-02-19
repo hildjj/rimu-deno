@@ -47,7 +47,7 @@ function fragQuotes(fragments: Fragment[]): Fragment[] {
   // Strip backlash from escaped quotes in non-done fragments.
   result
     .filter(fragment => !fragment.done)
-    .forEach(fragment => (fragment.text = Quotes.unescape(fragment.text)));
+    .forEach(fragment => fragment.text = Quotes.unescape(fragment.text));
   return result;
 }
 
@@ -91,10 +91,7 @@ function fragQuote(fragment: Fragment): Fragment[] {
   if (!def.spans) {
     // Spans are disabled so render the quoted text verbatim.
     quoted = Utils.replaceSpecialChars(quoted);
-    quoted = quoted.replace(
-      /\u0000/g,
-      "\u0001"
-    ); // Flag replacements as verbatim.
+    quoted = quoted.replace(/\u0000/g, "\u0001"); // Flag replacements as verbatim.
     result.push({ text: quoted, done: true });
   } else {
     // Recursively process the quoted text.
@@ -130,7 +127,7 @@ function preReplacements(text: string): string {
 function postReplacements(text: string): string {
   return text.replace(/[\u0000\u0001]/g, function(match): string {
     let fragment = savedReplacements.shift() as Fragment;
-    return match === "\u0000"
+    return (match === "\u0000")
       ? fragment.text
       : Utils.replaceSpecialChars(fragment.verbatim as string);
   });
@@ -199,6 +196,6 @@ function fragSpecials(fragments: Fragment[]): void {
   fragments
     .filter(fragment => !fragment.done)
     .forEach(
-      fragment => (fragment.text = Utils.replaceSpecialChars(fragment.text))
+      fragment => fragment.text = Utils.replaceSpecialChars(fragment.text)
     );
 }

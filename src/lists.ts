@@ -56,7 +56,8 @@ let defs: Definition[] = [
   }
 ];
 
-let ids: string[]; // Stack of open list IDs.
+let ids: string[] // Stack of open list IDs.
+;
 
 export function render(reader: Io.Reader, writer: Io.Writer): boolean {
   if (reader.eof()) Options.panic("premature eof");
@@ -100,8 +101,7 @@ function renderListItem(
   let def = item.def;
   let match = item.match;
   let text: string;
-  if (match.length === 4) {
-    // 3 match groups => definition list.
+  if (match.length === 4) { // 3 match groups => definition list.
     writer.write(BlockAttributes.inject(def.termOpenTag as string, false));
     BlockAttributes.id = ""; // Only applied to term tag.
     text = Utils.replaceInline(match[1], { macros: true, spans: true });
@@ -136,19 +136,17 @@ function renderListItem(
       }
       break;
     }
-    if (attached_done) break; // Multiple attached blocks are not permitted.
+    if (attached_done) {
+      break; // Multiple attached blocks are not permitted.
+    }
     if (blank_lines === 0) {
       let savedIds = ids;
       ids = [];
-      if (
-        DelimitedBlocks.render(reader, attached_lines, [
-          "comment",
-          "code",
-          "division",
-          "html",
-          "quote"
-        ])
-      ) {
+      if (DelimitedBlocks.render(
+        reader,
+        attached_lines,
+        ["comment", "code", "division", "html", "quote"]
+      )) {
         attached_done = true;
       } else {
         // Item body line.
@@ -157,12 +155,11 @@ function renderListItem(
       }
       ids = savedIds;
     } else if (blank_lines === 1) {
-      if (
-        DelimitedBlocks.render(reader, attached_lines, [
-          "indented",
-          "quote-paragraph"
-        ])
-      ) {
+      if (DelimitedBlocks.render(
+        reader,
+        attached_lines,
+        ["indented", "quote-paragraph"]
+      )) {
         attached_done = true;
       } else {
         break;
@@ -185,9 +182,15 @@ function renderListItem(
 function consumeBlockAttributes(reader: Io.Reader, writer: Io.Writer): number {
   let blanks = 0;
   while (true) {
-    if (reader.eof()) return -1;
-    if (LineBlocks.render(reader, writer, ["attributes"])) continue;
-    if (reader.cursor !== "") return blanks;
+    if (reader.eof()) {
+      return -1;
+    }
+    if (LineBlocks.render(reader, writer, ["attributes"])) {
+      continue;
+    }
+    if (reader.cursor !== "") {
+      return blanks;
+    }
     blanks++;
     reader.next();
   }
@@ -210,8 +213,7 @@ function matchItem(reader: Io.Reader): ItemInfo | null {
       }
       item.match = match;
       item.def = def;
-      item.id = match[match.length -
-        2]; // The second to last match group is the list ID.
+      item.id = match[match.length - 2]; // The second to last match group is the list ID.
       return item;
     }
   }

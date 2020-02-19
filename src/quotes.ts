@@ -7,7 +7,8 @@ export interface Definition {
   spans: boolean; // Allow span elements inside quotes.
 }
 
-let defs: Definition[]; // Mutable definitions initialized by DEFAULT_DEFS.
+let defs: Definition[] // Mutable definitions initialized by DEFAULT_DEFS.
+;
 
 const DEFAULT_DEFS: Definition[] = [
   {
@@ -54,8 +55,10 @@ const DEFAULT_DEFS: Definition[] = [
   }
 ];
 
-export let quotesRe: RegExp; // Searches for quoted text.
-let unescapeRe: RegExp; // Searches for escaped quotes.
+export let quotesRe: RegExp // Searches for quoted text.
+;
+let unescapeRe: RegExp // Searches for escaped quotes.
+;
 
 // Reset definitions to defaults.
 export function init(): void {

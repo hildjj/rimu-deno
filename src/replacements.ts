@@ -7,7 +7,8 @@ export interface Definition {
   filter?: (match: RegExpExecArray) => string;
 }
 
-export let defs: Definition[]; // Mutable definitions initialized by DEFAULT_DEFS.
+export let defs: Definition[] // Mutable definitions initialized by DEFAULT_DEFS.
+;
 
 const DEFAULT_DEFS: Definition[] = [
   // Begin match with \\? to allow the replacement to be escaped.
@@ -74,11 +75,10 @@ const DEFAULT_DEFS: Definition[] = [
   // Match HTML comment or HTML tag.
   // $1 = tag, $2 = tag name
   {
-    match: /\\?(<!--(?:[^<>&]*)?-->|<\/?([a-z][a-z0-9]*)(?:\s+[^<>&]+)?>)/gi,
+    match: /\\?(<!--(?:[^<>&]*)?-->|<\/?([a-z][a-z0-9]*)(?:\s+[^<>&]+)?>)/ig,
     replacement: "",
     filter: function(match: RegExpExecArray): string {
-      return Options
-        .htmlSafeModeFilter(match[1]); // Matched HTML comment or inline tag.
+      return Options.htmlSafeModeFilter(match[1]); // Matched HTML comment or inline tag.
     }
   },
   // Link: <url>

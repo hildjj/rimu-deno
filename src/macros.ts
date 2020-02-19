@@ -60,8 +60,9 @@ export function setValue(name: string, value: string, quote: string): void {
     try {
       value = eval(value); // tslint:disable-line no-eval
     } catch (e) {
-      Options
-        .errorCallback(`illegal macro expression: ${e.message}: ${value}`);
+      Options.errorCallback(
+        `illegal macro expression: ${e.message}: ${value}`
+      );
     }
   }
   for (let def of defs) {
@@ -82,109 +83,103 @@ export function render(text: string, silent: boolean = false): string {
   const MATCH_SIMPLE = /\\?{([\w\-]+)()}/g; // Simple macro invocation.
   let result = text;
   [MATCH_SIMPLE, MATCH_COMPLEX].forEach(find => {
-    result = result.replace(find, function(
-      match: string,
-      ...submatches: string[]
-    ): string {
-      if (match[0] === "\\") {
-        return match.slice(1);
-      }
-      let name = submatches[0];
-      let params = submatches[1] || "";
-      if (params[0] === "?") {
-        // DEPRECATED: Existential macro invocation.
-        if (!silent) {
-          Options.errorCallback(
-            "existential macro invocations are deprecated: " + match
-          );
+    result = result.replace(
+      find,
+      function(match: string, ...submatches: string[]): string {
+        if (match[0] === "\\") {
+          return match.slice(1);
         }
-        return match;
-      }
-      let value = getValue(name); // Macro value is null if macro is undefined.
-      if (value === null) {
-        if (!silent) {
-          Options.errorCallback("undefined macro: " + match + ": " + text);
+        let name = submatches[0];
+        let params = submatches[1] || "";
+        if (params[0] === "?") { // DEPRECATED: Existential macro invocation.
+          if (!silent) {
+            Options.errorCallback(
+              "existential macro invocations are deprecated: " + match
+            );
+          }
+          return match;
         }
-        return match;
-      }
-      if (find === MATCH_SIMPLE) {
-        return value;
-      }
-      params = params.replace(/\\}/g, "}"); // Unescape escaped } characters.
-      switch (params[0]) {
-        case "|": // Parametrized macro.
-          let paramsList = params.slice(1).split("|");
-          // Substitute macro parameters.
-          // Matches macro definition formal parameters [$]$<param-number>[[\]:<default-param-value>$]
-          // [$]$ = 1st match group; <param-number> (1, 2..) = 2nd match group;
-          // :[\]<default-param-value>$ = 3rd match group; <default-param-value> = 4th match group.
-          const PARAM_RE = /\\?(\$\$?)(\d+)(\\?:(|[^]*?[^\\])\$)?/g;
-          value = (value || "").replace(PARAM_RE, function(
-            match: string,
-            p1: string,
-            p2: string,
-            p3: string | undefined,
-            p4: string
-          ): string {
-            if (match[0] === "\\") {
-              // Unescape escaped macro parameters.
-              return match.slice(1);
-            }
-            if (Number(p2) === 0) {
-              return match; // $0 is not a valid parameter name.
-            }
-            let param: string | undefined = paramsList[Number(p2) - 1];
-            param = param === undefined
-              ? ""
-              : param; // Unassigned parameters are replaced with a blank string.
-            if (p3 !== undefined) {
-              if (p3[0] === "\\") {
-                // Unescape escaped default parameter.
-                param += p3.slice(1);
-              } else {
-                if (param === "") {
-                  param = p4; // Assign default parameter value.
-                  param = param.replace(
-                    /\\\$/g,
-                    "$"
-                  ); // Unescape escaped $ characters in the default value.
-                }
-              }
-            }
-            if (p1 === "$$") {
-              param = Spans.render(param);
-            }
-            return param;
-          });
+        let value = getValue(name); // Macro value is null if macro is undefined.
+        if (value === null) {
+          if (!silent) {
+            Options.errorCallback("undefined macro: " + match + ": " + text);
+          }
+          return match;
+        }
+        if (find === MATCH_SIMPLE) {
           return value;
-        case "!": // Exclusion macro.
-        case "=": // Inclusion macro.
-          let pattern = params.slice(1);
-          let skip = false;
-          try {
-            skip = !RegExp("^" + pattern + "$").test(value || "");
-          } catch {
-            if (!silent) {
-              Options.errorCallback(
-                "illegal macro regular expression: " + pattern + ": " + text
-              );
+        }
+        params = params.replace(/\\}/g, "}"); // Unescape escaped } characters.
+        switch (params[0]) {
+          case "|": // Parametrized macro.
+            let paramsList = params.slice(1).split("|");
+            // Substitute macro parameters.
+            // Matches macro definition formal parameters [$]$<param-number>[[\]:<default-param-value>$]
+            // [$]$ = 1st match group; <param-number> (1, 2..) = 2nd match group;
+            // :[\]<default-param-value>$ = 3rd match group; <default-param-value> = 4th match group.
+            const PARAM_RE = /\\?(\$\$?)(\d+)(\\?:(|[^]*?[^\\])\$)?/g;
+            value = (value || "").replace(
+              PARAM_RE,
+              function(
+                match: string,
+                p1: string,
+                p2: string,
+                p3: string | undefined,
+                p4: string
+              ): string {
+                if (match[0] === "\\") { // Unescape escaped macro parameters.
+                  return match.slice(1);
+                }
+                if (Number(p2) === 0) {
+                  return match; // $0 is not a valid parameter name.
+                }
+                let param: string | undefined = paramsList[Number(p2) - 1];
+                param = param === undefined ? "" : param; // Unassigned parameters are replaced with a blank string.
+                if (p3 !== undefined) {
+                  if (p3[0] === "\\") { // Unescape escaped default parameter.
+                    param += p3.slice(1);
+                  } else {
+                    if (param === "") {
+                      param = p4; // Assign default parameter value.
+                      param = param.replace(/\\\$/g, "$"); // Unescape escaped $ characters in the default value.
+                    }
+                  }
+                }
+                if (p1 === "$$") {
+                  param = Spans.render(param);
+                }
+                return param;
+              }
+            );
+            return value;
+          case "!": // Exclusion macro.
+          case "=": // Inclusion macro.
+            let pattern = params.slice(1);
+            let skip = false;
+            try {
+              skip = !RegExp("^" + pattern + "$").test(value || "");
+            } catch {
+              if (!silent) {
+                Options.errorCallback(
+                  "illegal macro regular expression: " + pattern + ": " + text
+                );
+              }
+              return match;
             }
-            return match;
-          }
-          if (params[0] === "!") {
-            skip = !skip;
-          }
-          return skip ? "\u0002" : ""; // Flag line for deletion.
-        default:
-          Options.errorCallback("illegal macro syntax: " + match[0]);
-          return "";
+            if (params[0] === "!") {
+              skip = !skip;
+            }
+            return skip ? "\u0002" : ""; // Flag line for deletion.
+          default:
+            Options.errorCallback("illegal macro syntax: " + match[0]);
+            return "";
+        }
       }
-    });
+    );
   });
   // Delete lines flagged by Inclusion/Exclusion macros.
   if (result.indexOf("\u0002") !== -1) {
-    result = result
-      .split("\n")
+    result = result.split("\n")
       .filter(line => line.indexOf("\u0002") === -1)
       .join("\n");
   }

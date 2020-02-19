@@ -27,7 +27,8 @@ export interface Definition {
   expansionOptions: Utils.ExpansionOptions;
 }
 
-export let defs: Definition[]; // Mutable definitions initialized by DEFAULT_DEFS.
+export let defs: Definition[] // Mutable definitions initialized by DEFAULT_DEFS.
+;
 
 const DEFAULT_DEFS: Definition[] = [
   // Delimited blocks cannot be escaped with a backslash.
@@ -125,8 +126,7 @@ const DEFAULT_DEFS: Definition[] = [
     },
     verify: function(match: RegExpMatchArray): boolean {
       // Return false if the HTML tag is an inline (non-block) HTML tag.
-      if (match[2]) {
-        // Matched alphanumeric tag name.
+      if (match[2]) { // Matched alphanumeric tag name.
         return !MATCH_INLINE_TAG.test(match[2]);
       } else {
         return true; // Matched HTML comment or doctype tag.
@@ -150,8 +150,7 @@ const DEFAULT_DEFS: Definition[] = [
     contentFilter: function(text: string): string {
       // Strip indent from start of each line.
       let first_indent = text.search(/\S/);
-      return text
-        .split("\n")
+      return text.split("\n")
         .map(line => {
           // Strip first line indent width or up to first non-space character.
           let indent = line.search(/\S|$/);
@@ -176,9 +175,10 @@ const DEFAULT_DEFS: Definition[] = [
     delimiterFilter: delimiterTextFilter,
     contentFilter: function(text: string): string {
       // Strip leading > from start of each line and unescape escaped leading >.
-      return text
-        .split("\n")
-        .map(line => line.replace(/^>/, "").replace(/^\\>/, ">"))
+      return text.split("\n")
+        .map(line => line
+          .replace(/^>/, "")
+          .replace(/^\\>/, ">"))
         .join("\n");
     }
   },
@@ -203,10 +203,9 @@ export function init(): void {
   defs = DEFAULT_DEFS.map(def => Utils.copy(def));
   // Copy definition object fields.
   defs.forEach(
-    (
-      def,
-      i
-    ) => (def.expansionOptions = Utils.copy(DEFAULT_DEFS[i].expansionOptions))
+    (def, i) => def.expansionOptions = Utils.copy(
+      DEFAULT_DEFS[i].expansionOptions
+    )
   );
 }
 
@@ -219,8 +218,9 @@ export function render(
 ): boolean {
   if (reader.eof()) Options.panic("premature eof");
   for (let def of defs) {
-    if (allowed.length > 0 &&
-      allowed.indexOf(def.name ? def.name : "") === -1)
+    if (allowed.length > 0 && allowed.indexOf(def.name
+      ? def.name
+      : "") === -1)
     {
       continue;
     }
@@ -276,8 +276,7 @@ export function render(
           opentag = BlockAttributes.inject(opentag);
         }
         if (expansionOptions.container) {
-          delete BlockAttributes.options
-            .container; // Consume before recursion.
+          delete BlockAttributes.options.container; // Consume before recursion.
           text = Api.render(text);
         } else {
           text = Utils.replaceInline(text, expansionOptions);
@@ -336,19 +335,14 @@ export function setDefinition(name: string, value: string): void {
   let def = getDefinition(name);
   if (!def) {
     Options.errorCallback(
-      "illegal delimited block name: " +
-        name +
-        ": |" +
-        name +
-        "|='" +
-        value +
+      "illegal delimited block name: " + name + ": |" + name + "|='" + value +
         "'"
     );
     return;
   }
-  let match = value
-    .trim()
-    .match(/^(?:(<[a-zA-Z].*>)\|(<[a-zA-Z/].*>))?(?:\s*)?([+-][ \w+-]+)?$/);
+  let match = value.trim().match(
+    /^(?:(<[a-zA-Z].*>)\|(<[a-zA-Z/].*>))?(?:\s*)?([+-][ \w+-]+)?$/
+  );
   if (match === null) {
     Options.errorCallback(
       "illegal delimited block definition: |" + name + "|='" + value + "'"
@@ -388,22 +382,11 @@ function macroDefContentFilter(
   match: string[],
   expansionOptions: Utils.ExpansionOptions
 ): string {
-  let quote = match[0][match[0].length - match[1].length -
-    1]; // The leading macro value quote character.
-  let name = (match[0].match(/^{([\w\-]+\??)}/) as RegExpMatchArray)
-    [1]; // Extract macro name from opening delimiter.
-  text = text.replace(
-    RegExp("(" + quote + ") *\\\\\\n", "g"),
-    "$1\n"
-  ); // Unescape line-continuations.
-  text = text.replace(
-    RegExp("(" + quote + " *[\\\\]+)\\\\\\n", "g"),
-    "$1\n"
-  ); // Unescape escaped line-continuations.
-  text = Utils.replaceInline(
-    text,
-    expansionOptions
-  ); // Expand macro invocations.
+  let quote = match[0][match[0].length - match[1].length - 1]; // The leading macro value quote character.
+  let name = (match[0].match(/^{([\w\-]+\??)}/) as RegExpMatchArray)[1]; // Extract macro name from opening delimiter.
+  text = text.replace(RegExp("(" + quote + ") *\\\\\\n", "g"), "$1\n"); // Unescape line-continuations.
+  text = text.replace(RegExp("(" + quote + " *[\\\\]+)\\\\\\n", "g"), "$1\n"); // Unescape escaped line-continuations.
+  text = Utils.replaceInline(text, expansionOptions); // Expand macro invocations.
   Macros.setValue(name, text, quote);
   return "";
 }

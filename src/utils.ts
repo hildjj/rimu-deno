@@ -23,8 +23,7 @@ export function escapeRegExp(s: string): string {
 }
 
 export function replaceSpecialChars(s: string): string {
-  return s
-    .replace(/&/g, "&amp;")
+  return s.replace(/&/g, "&amp;")
     .replace(/>/g, "&gt;")
     .replace(/</g, "&lt;");
 }
@@ -91,13 +90,18 @@ export function replaceInline(
 
 // Global Block Attributes state (namespace "singleton", see http://stackoverflow.com/a/30174360).
 export namespace BlockAttributes {
-  export let classes: string; // Space separated HTML class names.
-  export let id: string; // HTML element id.
-  export let css: string; // HTML CSS styles.
-  export let attributes: string; // Other HTML element attributes.
+  export let classes: string // Space separated HTML class names.
+  ;
+  export let id: string // HTML element id.
+  ;
+  export let css: string // HTML CSS styles.
+  ;
+  export let attributes: string // Other HTML element attributes.
+  ;
   export let options: ExpansionOptions;
 
-  let ids: string[]; // List of allocated HTML ids.
+  let ids: string[] // List of allocated HTML ids.
+  ;
 
   export function init(): void {
     classes = "";
@@ -115,30 +119,24 @@ export namespace BlockAttributes {
     text = replaceInline(text, { macros: true });
     let m =
       /^\\?\.((?:\s*[a-zA-Z][\w\-]*)+)*(?:\s*)?(#[a-zA-Z][\w\-]*\s*)?(?:\s*)?(?:"(.+?)")?(?:\s*)?(\[.+])?(?:\s*)?([+-][ \w+-]+)?$/
-        .exec(
-          text
-        );
+        .exec(text);
     if (!m) {
       return false;
     }
     if (!Options.skipBlockAttributes()) {
-      if (m[1]) {
-        // HTML element class names.
+      if (m[1]) { // HTML element class names.
         classes += " " + m[1].trim();
         classes = classes.trim();
       }
-      if (m[2]) {
-        // HTML element id.
+      if (m[2]) { // HTML element id.
         id = m[2].trim().slice(1);
       }
-      if (m[3]) {
-        // CSS properties.
+      if (m[3]) { // CSS properties.
         if (css && css.substr(-1) !== ";") css += ";";
         css += " " + m[3].trim();
         css = css.trim();
       }
-      if (m[4] && !Options.isSafeModeNz()) {
-        // HTML attributes.
+      if (m[4] && !Options.isSafeModeNz()) { // HTML attributes.
         attributes += " " + m[4].slice(1, m[4].length - 1).trim();
         attributes = attributes.trim();
       }
@@ -179,15 +177,14 @@ export namespace BlockAttributes {
       let re = /^(<[^>]*style=")(.*?)"/i;
       if (re.test(tag)) {
         // Inject CSS styles into first existing style attribute in first tag.
-        tag = tag.replace(re, function(
-          match: string,
-          p1: string,
-          p2: string
-        ): string {
-          p2 = p2.trim();
-          if (p2 && p2.substr(-1) !== ";") p2 += ";";
-          return `${p1}${p2} ${css}"`;
-        });
+        tag = tag.replace(
+          re,
+          function(match: string, p1: string, p2: string): string {
+            p2 = p2.trim();
+            if (p2 && p2.substr(-1) !== ";") p2 += ";";
+            return `${p1}${p2} ${css}"`;
+          }
+        );
       } else {
         attrs += ` style="${css}"`;
       }
@@ -215,14 +212,12 @@ export namespace BlockAttributes {
   }
 
   export function slugify(text: string): string {
-    let slug = text
-      .replace(/\W+/g, "-") // Replace non-alphanumeric characters with dashes.
+    let slug = text.replace(/\W+/g, "-") // Replace non-alphanumeric characters with dashes.
       .replace(/-+/g, "-") // Replace multiple dashes with single dash.
       .replace(/(^-)|(-$)/g, "") // Trim leading and trailing dashes.
       .toLowerCase();
     if (!slug) slug = "x";
-    if (ids.indexOf(slug) > -1) {
-      // Another element already has that id.
+    if (ids.indexOf(slug) > -1) { // Another element already has that id.
       let i = 2;
       while (ids.indexOf(slug + "-" + i) > -1) {
         i++;
