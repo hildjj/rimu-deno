@@ -43,7 +43,11 @@ let defs: Definition[] = [
         return false;
       }
       // Insert the macro value into the reader just ahead of the cursor.
-      let spliceArgs = [reader.pos + 1, 0, ...value.split("\n")];
+      let spliceArgs: [number, number, ...any[]] = [
+        reader.pos + 1,
+        0,
+        ...value.split("\n")
+      ];
       Array.prototype.splice.apply(reader.lines, spliceArgs);
       return true;
     },
@@ -120,33 +124,41 @@ let defs: Definition[] = [
       if (Macros.getValue("--header-ids") && BlockAttributes.id === "") {
         BlockAttributes.id = BlockAttributes.slugify(match[2]);
       }
-      return Utils.replaceMatch(match, this.replacement, { macros: true });
+      return Utils.replaceMatch(
+        match,
+        this.replacement as string,
+        { macros: true }
+      );
     }
   },
   // Block image: <image:src|alt>
   // src = $1, alt = $2
   {
     match: /^\\?<image:([^\s|]+)\|([^]+?)>$/,
-    replacement: "<img src=\"$1\" alt=\"$2\">"
+    replacement: '<img src="$1" alt="$2">'
   },
   // Block image: <image:src>
   // src = $1, alt = $1
   {
     match: /^\\?<image:([^\s|]+?)>$/,
-    replacement: "<img src=\"$1\" alt=\"$1\">"
+    replacement: '<img src="$1" alt="$1">'
   },
   // DEPRECATED as of 3.4.0.
   // Block anchor: <<#id>>
   // id = $1
   {
     match: /^\\?<<#([a-zA-Z][\w\-]*)>>$/,
-    replacement: "<div id=\"$1\"></div>",
+    replacement: '<div id="$1"></div>',
     filter: function(match: RegExpExecArray, reader?: Io.Reader): string {
       if (Options.skipBlockAttributes()) {
         return "";
       } else {
         // Default (non-filter) replacement processing.
-        return Utils.replaceMatch(match, this.replacement, { macros: true });
+        return Utils.replaceMatch(
+          match,
+          this.replacement as string,
+          { macros: true }
+        );
       }
     }
   },
