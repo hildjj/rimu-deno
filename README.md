@@ -1,13 +1,14 @@
 A port of the [Rimu Markup language](https://srackham.github.io/rimu/) to the
 [Deno](https://deno.land/) runtime.
 
-**CAUTION: This project is in an early stage of development.
+**NOTE**: This project is a development release. A production release will follow once Deno has
+reached 1.0.
 
-Tested with Deno 0.32.0
+Tested with Deno 0.34.0
 
 
 ## Features
-Functionally identical to the [JavaScript
+Functionally identical to the [Rimu JavaScript
 implementation](https://github.com/srackham/rimu) version 11.1 with the
 following exceptions:
 
@@ -40,7 +41,7 @@ implemented by `rimuc.ts`.
 Use the Deno `install` command to install an executable CLI wrapper. The
 following example creates the executable `$HOME/.deno/bin/rimudeno`:
 
-	deno install rimudeno https://raw.github.com/srackham/rimu-deno/master/src/rimuc.ts --allow-env --allow-read --allow-write
+    deno install rimudeno --allow-env --allow-read --allow-write https://raw.github.com/srackham/rimu-deno/master/src/rimuc.ts
 
 Run it with e.g.
 
