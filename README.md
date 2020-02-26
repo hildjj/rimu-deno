@@ -27,8 +27,10 @@ console.log(rimu.render("Hello *Rimu*!"));
 
 Save the above code as file `minimal-example.ts` then run it using:
 
-    deno minimal-example.ts
-    
+    deno --reload minimal-example.ts
+
+The `--reload` option forces the latest version of the Rimu library to be downloaded.
+
 See also the [Rimu API
 documentation](https://srackham.github.io/rimu/reference.html#api).
 
