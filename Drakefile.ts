@@ -1,20 +1,25 @@
-import { abort, desc, env, execute, glob, quote, run, sh,
-  task } from "file:///home/srackham/local/projects/drake/mod.ts";
+/**
+ * rimu-deno drakefile.
+ */
+
+import { abort, desc, env, execute, glob, quote, readFile, run, sh,
+  task } from "https://raw.github.com/srackham/drake/master/mod.ts";
 
 env["--default-task"] = "test";
 const SRC_FILES = glob("mod.ts", "src/*.ts");
+const RIMUC_TS = "src/rimuc.ts";
 const RESOURCES_SRC = "src/resources.ts";
 const RESOURCE_FILES = glob("src/resources/*");
 
 desc("Format source files");
 task("fmt", [], async function() {
-  await sh(`deno fmt Drakefile.ts ${quote(SRC_FILES)}`);
+  await sh(`deno fmt Drakefile.ts ${quote(["Drakefile.ts", ...SRC_FILES])}`);
 });
 
 desc("Run tests");
 task("test", [RESOURCES_SRC], async function() {
   await sh(`
-    echo 'Hello _World_!' | deno --allow-env --allow-read src/rimuc.ts | grep --silent '^<p>Hello <em>World</em>!</p>$'
+    echo 'Hello _World_!' | deno --allow-env --allow-read ${RIMUC_TS} | grep --silent '^<p>Hello <em>World</em>!</p>$'
     `);
 });
 
@@ -51,7 +56,7 @@ task(RESOURCES_SRC, RESOURCE_FILES, async function() {
 desc("Generate rimudeno executable wrapper for rimuc CLI");
 task("install", ["test"], async function() {
   await sh(
-    `deno install -f --allow-env --allow-read --allow-write rimudeno ./src/rimuc.ts`
+    `deno install -f --allow-env --allow-read --allow-write rimudeno ${RIMUC_TS}`
   );
 });
 
@@ -64,6 +69,16 @@ task("tag", ["test"], async function() {
   }
   if (!/^\d+\.\d+\.\d+/.test(env.vers as string)) {
     abort(`illegal semantic version number: ${env.vers}`);
+  }
+  let match = readFile(RIMUC_TS).match(/^const VERSION = "(.+)"/m);
+  if (!match) {
+    abort(`missing 'vers' declaration in ${RIMUC_TS}`);
+  }
+  match = match as RegExpMatchArray;
+  if (match[1] !== env.vers) {
+    console.log(
+      `WARNING: ${env.vers} does not match version ${match[1]} in ${RIMUC_TS}`
+    );
   }
   const tag = `v${env.vers}`;
   console.log(`tag: ${tag}`);
