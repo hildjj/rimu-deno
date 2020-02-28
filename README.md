@@ -1,10 +1,12 @@
+# Rimu Markup for Deno
+
 A port of the [Rimu Markup language](https://srackham.github.io/rimu/) to the
 [Deno](https://deno.land/) runtime.
 
-**NOTE**: This project is a development release. A production release will follow once Deno has
+**NOTE**: This is a development release. A production release will follow once Deno has
 reached 1.0.
 
-Tested with Deno 0.34.0
+Tested with Deno 0.34.0 running on Ubuntu 18.04.
 
 
 ## Features
@@ -43,7 +45,7 @@ implemented by `rimuc.ts`.
 Use the Deno `install` command to install an executable CLI wrapper. The
 following example creates the executable `$HOME/.deno/bin/rimudeno`:
 
-    deno install rimudeno --allow-env --allow-read --allow-write https://raw.github.com/srackham/rimu-deno/master/src/rimuc.ts
+    deno install --force rimudeno --allow-env --allow-read --allow-write https://raw.github.com/srackham/rimu-deno/master/src/rimuc.ts
 
 Run it with e.g.
 
