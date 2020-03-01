@@ -195,7 +195,7 @@ function fragSpecials(fragments: Fragment[]): void {
   // Replace special characters in all non-done fragments.
   fragments
     .filter(fragment => !fragment.done)
-    .forEach(
-      fragment => fragment.text = Utils.replaceSpecialChars(fragment.text)
+    .forEach(fragment =>
+      fragment.text = Utils.replaceSpecialChars(fragment.text)
     );
 }

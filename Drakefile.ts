@@ -2,8 +2,18 @@
  * rimu-deno drakefile.
  */
 
-import { abort, desc, env, execute, glob, quote, readFile, run, sh,
-  task } from "https://raw.github.com/srackham/drake/master/mod.ts";
+import {
+  abort,
+  desc,
+  env,
+  execute,
+  glob,
+  quote,
+  readFile,
+  run,
+  sh,
+  task
+} from "https://raw.github.com/srackham/drake/master/mod.ts";
 
 env["--default-task"] = "test";
 const SRC_FILES = glob("mod.ts", "src/*.ts");

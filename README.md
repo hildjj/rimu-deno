@@ -6,7 +6,7 @@ A port of the [Rimu Markup language](https://srackham.github.io/rimu/) to the
 **NOTE**: This is a development release. A production release will follow once Deno has
 reached 1.0.
 
-Tested with Deno 0.34.0 running on Ubuntu 18.04.
+Tested with Deno 0.35.0 running on Ubuntu 18.04.
 
 
 ## Features
@@ -53,7 +53,7 @@ Run it with e.g.
 
 
 ## Building
-No explicit build setp is required, just import or run the TypeScript URL.
+No explicit build setup is required, just import or run the TypeScript URL.
 
 
 ## Learn more about Rimu

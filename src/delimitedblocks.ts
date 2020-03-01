@@ -176,9 +176,11 @@ const DEFAULT_DEFS: Definition[] = [
     contentFilter: function(text: string): string {
       // Strip leading > from start of each line and unescape escaped leading >.
       return text.split("\n")
-        .map(line => line
-          .replace(/^>/, "")
-          .replace(/^\\>/, ">"))
+        .map(line =>
+          line
+            .replace(/^>/, "")
+            .replace(/^\\>/, ">")
+        )
         .join("\n");
     }
   },
@@ -202,8 +204,8 @@ const DEFAULT_DEFS: Definition[] = [
 export function init(): void {
   defs = DEFAULT_DEFS.map(def => Utils.copy(def));
   // Copy definition object fields.
-  defs.forEach(
-    (def, i) => def.expansionOptions = Utils.copy(
+  defs.forEach((def, i) =>
+    def.expansionOptions = Utils.copy(
       DEFAULT_DEFS[i].expansionOptions
     )
   );

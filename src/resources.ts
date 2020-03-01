@@ -1,5 +1,5 @@
 // Generated automatically from resource files. Do not edit.
-export let resources: { [name: string]: string; } = {
+export let resources: { [name: string]: string } = {
   "flex-header.rmu": String.raw `/*
   Used by rimuc \x60--layout flex\x60 option.
 */

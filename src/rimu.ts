@@ -8,8 +8,11 @@
 import * as Api from "./api.ts";
 import * as Options from "./options.ts";
 
-export { CallbackFunction, CallbackMessage,
-  RenderOptions as Options } from "./options.ts";
+export {
+  CallbackFunction,
+  CallbackMessage,
+  RenderOptions as Options
+} from "./options.ts";
 
 /*
   The single public API which translates Rimu Markup to HTML:
