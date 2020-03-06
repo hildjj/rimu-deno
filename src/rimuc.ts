@@ -16,7 +16,10 @@ const STDIN = "/dev/stdin";
 const HOME_DIR = Deno.env(Deno.build.os === "win" ? "USERPROFILE" : "HOME");
 const RIMURC = resolve(HOME_DIR || "", ".rimurc");
 
-// Helpers.
+/*
+ * Helpers.
+ */
+
 function die(message: string): void {
   console.error(message);
   Deno.exit(1);

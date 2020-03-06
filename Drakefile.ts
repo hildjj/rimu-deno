@@ -16,6 +16,7 @@ import {
 } from "https://raw.github.com/srackham/drake/master/mod.ts";
 
 env["--default-task"] = "test";
+
 const SRC_FILES = glob("mod.ts", "src/*.ts");
 const RIMUC_TS = "src/rimuc.ts";
 const RESOURCES_SRC = "src/resources.ts";
@@ -27,7 +28,7 @@ task("fmt", [], async function() {
 });
 
 desc("Run tests");
-task("test", [RESOURCES_SRC], async function() {
+task("test", ["fmt", RESOURCES_SRC], async function() {
   await sh(`
     echo 'Hello _World_!' | deno --allow-env --allow-read ${RIMUC_TS} | grep --silent '^<p>Hello <em>World</em>!</p>$'
     `);
