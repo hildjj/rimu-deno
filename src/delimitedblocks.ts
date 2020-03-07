@@ -205,9 +205,7 @@ export function init(): void {
   defs = DEFAULT_DEFS.map(def => Utils.copy(def));
   // Copy definition object fields.
   defs.forEach((def, i) =>
-    def.expansionOptions = Utils.copy(
-      DEFAULT_DEFS[i].expansionOptions
-    )
+    def.expansionOptions = Utils.copy(DEFAULT_DEFS[i].expansionOptions)
   );
 }
 
