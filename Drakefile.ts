@@ -2,18 +2,22 @@
  * rimu-deno drakefile.
  */
 
+// import { abort, desc, env, glob, quote, readFile, run, sh, task } from "https://raw.github.com/srackham/drake/master/mod.ts";
 import {
   abort,
   desc,
   env,
   execute,
   glob,
+  log,
   quote,
   readFile,
   run,
   sh,
-  task
-} from "https://raw.github.com/srackham/drake/master/mod.ts";
+  task,
+  writeFile
+} from "file:///home/srackham/local/projects/drake/mod.ts";
+import * as path from "https://deno.land/std@v0.35.0/path/mod.ts";
 
 env["--default-task"] = "test";
 
@@ -38,30 +42,31 @@ desc(
   "Fetch the latest Rimu source and add .ts extension to import and export statements for Deno"
 );
 task("update", [], async function() {
-  await sh(`
-	for f in $(find ../rimu/src/rimu -type f -name '*.ts'); do
-		sed -E "s/^((import|export).*from '.*)'/\\1.ts'/" $f > src/$(basename $f)
-	done
-	`);
+  for (const f of glob("../rimu/src/rimu/*.ts")) {
+    const text = readFile(f).replace(
+      /^((import|export).*from '.*)'/gm,
+      "$1.ts'"
+    );
+    writeFile(path.join("src", path.basename(f)), text);
+  }
   await execute("fmt");
 });
 
 desc("Build resources.ts containing rimuc resource files");
 task(RESOURCES_SRC, RESOURCE_FILES, async function() {
-  await sh(`
-	echo "Building resources ${RESOURCES_SRC}"
-	echo "// Generated automatically from resource files. Do not edit." > ${RESOURCES_SRC}
-	echo "export let resources: { [name: string]: string } = {" >> ${RESOURCES_SRC}
-	for f in ${quote(RESOURCE_FILES)}; do
-		echo -n "  '$(basename $f)': " >> ${RESOURCES_SRC}
-		data=$(cat $f)
-		data=\${data//\\\\/\\\\x5C} # Escape backslash (unescaped at runtime).
-		data=\${data//\\\`/\\\\x60} # Escape backticks (unescaped at runtime).
-		echo "String.raw\\\`$data\\\`," >> ${RESOURCES_SRC}
-	done
-	echo "};" >> ${RESOURCES_SRC}
-	deno fmt ${RESOURCES_SRC}
-    `);
+  log(`Building resources ${RESOURCES_SRC}`);
+  let text = "// Generated automatically from resource files. Do not edit.\n";
+  text += "export let resources: { [name: string]: string } = {";
+  for (const f of RESOURCE_FILES) {
+    text += `  '${path.basename(f)}': `;
+    let data = readFile(f);
+    data = data.replace(/\\/g, "\\x5C"); // Escape backslash (unescaped at runtime).
+    data = data.replace(/`/g, "\\x60"); //  Escape backticks (unescaped at runtime).
+    text += `String.raw\`${data}\`,\n`;
+  }
+  text += "};";
+  writeFile(RESOURCES_SRC, text);
+  await sh(`deno fmt ${RESOURCES_SRC}`);
 });
 
 desc("Generate rimudeno executable wrapper for rimuc CLI");
