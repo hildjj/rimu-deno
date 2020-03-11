@@ -2,7 +2,7 @@
  * rimu-deno drakefile.
  */
 
-// import { abort, desc, env, glob, quote, readFile, run, sh, task } from "https://raw.github.com/srackham/drake/master/mod.ts";
+/*
 import {
   abort,
   desc,
@@ -14,11 +14,30 @@ import {
   readFile,
   run,
   sh,
+  shCapture,
+  task,
+  writeFile
+} from "https://raw.github.com/srackham/drake/master/mod.ts";
+*/
+import {
+  abort,
+  desc,
+  env,
+  execute,
+  glob,
+  log,
+  quote,
+  readFile,
+  run,
+  sh,
+  shCapture,
   task,
   writeFile
 } from "file:///home/srackham/local/projects/drake/mod.ts";
 import * as path from "https://deno.land/std@v0.35.0/path/mod.ts";
-
+import {
+  assertEquals
+} from "https://deno.land/std@v0.35.0/testing/asserts.ts";
 env["--default-task"] = "test";
 
 const SRC_FILES = glob("mod.ts", "src/*.ts");
@@ -28,14 +47,16 @@ const RESOURCE_FILES = glob("src/resources/*");
 
 desc("Format source files");
 task("fmt", [], async function() {
-  await sh(`deno fmt Drakefile.ts ${quote(["Drakefile.ts", ...SRC_FILES])}`);
+  await sh(`deno fmt ${quote(["Drakefile.ts", ...SRC_FILES])}`);
 });
 
 desc("Run tests");
 task("test", ["fmt", RESOURCES_SRC], async function() {
-  await sh(`
-    echo 'Hello _World_!' | deno --allow-env --allow-read ${RIMUC_TS} | grep --silent '^<p>Hello <em>World</em>!</p>$'
-    `);
+  const { stdout } = await shCapture(
+    `deno --allow-env --allow-read "${RIMUC_TS}"`,
+    { stdin: "Hello _World_!" }
+  );
+  assertEquals(stdout, "<p>Hello <em>World</em>!</p>");
 });
 
 desc(
@@ -66,13 +87,13 @@ task(RESOURCES_SRC, RESOURCE_FILES, async function() {
   }
   text += "};";
   writeFile(RESOURCES_SRC, text);
-  await sh(`deno fmt ${RESOURCES_SRC}`);
+  await sh(`deno fmt "${RESOURCES_SRC}"`);
 });
 
 desc("Generate rimudeno executable wrapper for rimuc CLI");
 task("install", ["test"], async function() {
   await sh(
-    `deno install -f --allow-env --allow-read --allow-write rimudeno ${RIMUC_TS}`
+    `deno install -f --allow-env --allow-read --allow-write rimudeno "${RIMUC_TS}"`
   );
 });
 
