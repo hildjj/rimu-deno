@@ -185,6 +185,12 @@ for (let infile of files) {
   } else if (infile === PREPEND) {
     source = prepend;
     options.safeMode = 0; // --prepend options are trusted.
+  } else if (infile === STDIN) {
+    try {
+      source = new TextDecoder().decode(Deno.readAllSync(Deno.stdin));
+    } catch (e) {
+      die(`error reading stdin: ${e.message}`);
+    }
   } else {
     if (!existsSync(infile)) {
       die("source file does not exist: " + infile);
