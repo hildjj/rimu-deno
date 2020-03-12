@@ -52,11 +52,11 @@ task("fmt", [], async function() {
 
 desc("Run tests");
 task("test", ["fmt", RESOURCES_SRC], async function() {
-  const { stdout } = await shCapture(
+  const { output } = await shCapture(
     `deno --allow-env --allow-read "${RIMUC_TS}"`,
-    { stdin: "Hello _World_!" }
+    { input: "Hello _World_!" }
   );
-  assertEquals(stdout, "<p>Hello <em>World</em>!</p>");
+  assertEquals(output, "<p>Hello <em>World</em>!</p>");
 });
 
 desc(
