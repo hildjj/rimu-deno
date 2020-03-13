@@ -185,20 +185,22 @@ for (let infile of files) {
   } else if (infile === PREPEND) {
     source = prepend;
     options.safeMode = 0; // --prepend options are trusted.
-  } else if (infile === STDIN) {
-    try {
-      source = new TextDecoder().decode(Deno.readAllSync(Deno.stdin));
-    } catch (e) {
-      die(`error reading stdin: ${e.message}`);
-    }
   } else {
-    if (!existsSync(infile)) {
-      die("source file does not exist: " + infile);
-    }
-    try {
-      source = readFileStrSync(infile).toString();
-    } catch (e) {
-      die("source file permission denied: " + infile);
+    if (infile === STDIN) {
+      try {
+        source = new TextDecoder().decode(Deno.readAllSync(Deno.stdin));
+      } catch (e) {
+        die(`error reading stdin: ${e.message}`);
+      }
+    } else {
+      if (!existsSync(infile)) {
+        die("source file does not exist: " + infile);
+      }
+      try {
+        source = readFileStrSync(infile);
+      } catch (e) {
+        die("source file permission denied: " + infile);
+      }
     }
     // Prepended and ~/.rimurc files are trusted.
     options.safeMode = prepend_files.indexOf(infile) > -1 ? 0 : safe_mode;
