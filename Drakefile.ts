@@ -2,7 +2,10 @@
  * rimu-deno drakefile.
  */
 
-// import { abort, desc, env, execute, glob, log, quote, readFile, run, sh, shCapture, task, writeFile } from "https://raw.github.com/srackham/drake/master/mod.ts";
+import * as path from "https://deno.land/std@v0.36.0/path/mod.ts";
+import {
+  assertEquals
+} from "https://deno.land/std@v0.36.0/testing/asserts.ts";
 import {
   abort,
   desc,
@@ -17,11 +20,8 @@ import {
   shCapture,
   task,
   writeFile
-} from "file:///home/srackham/local/projects/drake/mod.ts";
-import * as path from "https://deno.land/std@v0.36.0/path/mod.ts";
-import {
-  assertEquals
-} from "https://deno.land/std@v0.36.0/testing/asserts.ts";
+} from "https://raw.github.com/srackham/drake/master/mod.ts";
+
 env["--default-task"] = "test";
 
 const SRC_FILES = glob("mod.ts", "src/*.ts");
