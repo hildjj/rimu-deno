@@ -27,17 +27,19 @@ let defs: Definition[] = [
   {
     match: Macros.MATCH_LINE,
     verify: function(match: RegExpExecArray, reader: Io.Reader): boolean {
-      if (Macros.LITERAL_DEF_OPEN.test(match[0]) ||
-        Macros.EXPRESSION_DEF_OPEN.test(match[0]))
-      {
+      if (
+        Macros.LITERAL_DEF_OPEN.test(match[0]) ||
+        Macros.EXPRESSION_DEF_OPEN.test(match[0])
+      ) {
         // Do not process macro definitions.
         return false;
       }
       // Silent because any macro expansion errors will be subsequently addressed downstream.
       let value = Macros.render(match[0], true);
-      if (value.substr(0, match[0].length) === match[0] ||
-        value.indexOf("\n" + match[0]) >= 0)
-      {
+      if (
+        value.substr(0, match[0].length) === match[0] ||
+        value.indexOf("\n" + match[0]) >= 0
+      ) {
         // The leading macro invocation expansion failed or contains itself.
         // This stops infinite recursion.
         return false;
@@ -194,10 +196,11 @@ export function render(
 ): boolean {
   if (reader.eof()) Options.panic("premature eof");
   for (let def of defs) {
-    if (allowed.length > 0 && allowed.indexOf(def.name
-      ? def.name
-      : "") === -1)
-    {
+    if (
+      allowed.length > 0 && allowed.indexOf(def.name
+        ? def.name
+        : "") === -1
+    ) {
       continue;
     }
     let match = def.match.exec(reader.cursor);

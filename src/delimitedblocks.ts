@@ -218,10 +218,11 @@ export function render(
 ): boolean {
   if (reader.eof()) Options.panic("premature eof");
   for (let def of defs) {
-    if (allowed.length > 0 && allowed.indexOf(def.name
-      ? def.name
-      : "") === -1)
-    {
+    if (
+      allowed.length > 0 && allowed.indexOf(def.name
+        ? def.name
+        : "") === -1
+    ) {
       continue;
     }
     let match = reader.cursor.match(def.openMatch);

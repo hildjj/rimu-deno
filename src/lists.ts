@@ -142,11 +142,13 @@ function renderListItem(
     if (blank_lines === 0) {
       let savedIds = ids;
       ids = [];
-      if (DelimitedBlocks.render(
-        reader,
-        attached_lines,
-        ["comment", "code", "division", "html", "quote"]
-      )) {
+      if (
+        DelimitedBlocks.render(
+          reader,
+          attached_lines,
+          ["comment", "code", "division", "html", "quote"]
+        )
+      ) {
         attached_done = true;
       } else {
         // Item body line.
@@ -155,11 +157,13 @@ function renderListItem(
       }
       ids = savedIds;
     } else if (blank_lines === 1) {
-      if (DelimitedBlocks.render(
-        reader,
-        attached_lines,
-        ["indented", "quote-paragraph"]
-      )) {
+      if (
+        DelimitedBlocks.render(
+          reader,
+          attached_lines,
+          ["indented", "quote-paragraph"]
+        )
+      ) {
         attached_done = true;
       } else {
         break;
