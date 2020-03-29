@@ -2,10 +2,6 @@
  * rimu-deno drakefile.
  */
 
-import * as path from "https://deno.land/std@v0.36.0/path/mod.ts";
-import {
-  assertEquals
-} from "https://deno.land/std@v0.36.0/testing/asserts.ts";
 import {
   abort,
   desc,
@@ -20,9 +16,14 @@ import {
   shCapture,
   task,
   writeFile
-} from "https://raw.github.com/srackham/drake/master/mod.ts";
+} from "file:///home/srackham/local/projects/drake/mod.ts";
+import * as path from "https://deno.land/std@v0.36.0/path/mod.ts";
+import {
+  assertEquals
+} from "https://deno.land/std@v0.36.0/testing/asserts.ts";
+// } from "https://raw.github.com/srackham/drake/master/mod.ts";
 
-env["--default-task"] = "test";
+env("--default-task", "test");
 
 const SRC_FILES = glob("mod.ts", "src/*.ts");
 const RIMUC_TS = "src/rimuc.ts";
@@ -85,23 +86,24 @@ desc(
   "Create Git version tag e.g. 'drake tag vers=1.0.0' creates tag 'v1.0.0'"
 );
 task("tag", ["test"], async function() {
-  if (!env.vers) {
+  if (!env("vers")) {
     abort("'vers' variable not set e.g. drake tag vers=1.0.0");
   }
-  if (!/^\d+\.\d+\.\d+/.test(env.vers as string)) {
-    abort(`illegal semantic version number: ${env.vers}`);
+  if (!/^\d+\.\d+\.\d+/.test(env("vers"))) {
+    abort(`illegal semantic version number: ${env("vers")}`);
   }
   let match = readFile(RIMUC_TS).match(/^const VERSION = "(.+)"/m);
   if (!match) {
     abort(`missing 'vers' declaration in ${RIMUC_TS}`);
   }
   match = match as RegExpMatchArray;
-  if (match[1] !== env.vers) {
+  if (match[1] !== env("vers")) {
     console.log(
-      `WARNING: ${env.vers} does not match version ${match[1]} in ${RIMUC_TS}`
+      `WARNING: ${env("vers")} does not match version ${match
+        [1]} in ${RIMUC_TS}`
     );
   }
-  const tag = `v${env.vers}`;
+  const tag = `v${env("vers")}`;
   console.log(`tag: ${tag}`);
   await sh(`git tag -a -m ${tag} ${tag}`);
 });
