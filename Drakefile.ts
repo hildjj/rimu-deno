@@ -2,8 +2,8 @@
  * rimu-deno drakefile.
  */
 
-import * as path from "https://deno.land/std@v0.36.0/path/mod.ts";
-import { assertEquals } from "https://deno.land/std@v0.36.0/testing/asserts.ts";
+import * as path from "https://deno.land/std@v0.38.0/path/mod.ts";
+import { assertEquals } from "https://deno.land/std@v0.38.0/testing/asserts.ts";
 import {
   abort,
   desc,

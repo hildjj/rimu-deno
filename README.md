@@ -8,7 +8,7 @@ reached 1.0.
 If you experience compilation errors try forcing a cache reload
 with the Deno `fetch` command e.g. `deno fetch Drakefile.ts --reload`
 
-Tested with Deno 0.36.0 running on Ubuntu 18.04.
+Tested with Deno 0.38.0 running on Ubuntu 18.04.
 
 
 ## Features
