@@ -31,27 +31,27 @@ const RESOURCES_SRC = "src/resources.ts";
 const RESOURCE_FILES = glob("src/resources/*");
 
 desc("Format source files");
-task("fmt", [], async function() {
+task("fmt", [], async function () {
   await sh(`deno fmt ${quote(["Drakefile.ts", ...SRC_FILES])}`);
 });
 
 desc("Run tests");
-task("test", ["fmt", RESOURCES_SRC], async function() {
+task("test", ["fmt", RESOURCES_SRC], async function () {
   const { output } = await shCapture(
     `deno --allow-env --allow-read "${RIMUC_TS}"`,
-    { input: "Hello _World_!" }
+    { input: "Hello _World_!" },
   );
   assertEquals(output, "<p>Hello <em>World</em>!</p>");
 });
 
 desc(
-  "Fetch the latest Rimu source and add .ts extension to import and export statements for Deno"
+  "Fetch the latest Rimu source and add .ts extension to import and export statements for Deno",
 );
-task("update", [], async function() {
+task("update", [], async function () {
   for (const f of glob("../rimu/src/rimu/*.ts")) {
     const text = readFile(f).replace(
       /^((import|export).*from '.*)'/gm,
-      "$1.ts'"
+      "$1.ts'",
     );
     writeFile(path.join("src", path.basename(f)), text);
   }
@@ -59,7 +59,7 @@ task("update", [], async function() {
 });
 
 desc("Build resources.ts containing rimuc resource files");
-task(RESOURCES_SRC, RESOURCE_FILES, async function() {
+task(RESOURCES_SRC, RESOURCE_FILES, async function () {
   log(`Building resources ${RESOURCES_SRC}`);
   let text = "// Generated automatically from resource files. Do not edit.\n";
   text += "export let resources: { [name: string]: string } = {";
@@ -76,16 +76,16 @@ task(RESOURCES_SRC, RESOURCE_FILES, async function() {
 });
 
 desc("Generate rimudeno executable wrapper for rimuc CLI");
-task("install", ["test"], async function() {
+task("install", ["test"], async function () {
   await sh(
-    `deno install -f --allow-env --allow-read --allow-write rimudeno "${RIMUC_TS}"`
+    `deno install -f --allow-env --allow-read --allow-write rimudeno "${RIMUC_TS}"`,
   );
 });
 
 desc(
-  "Create Git version tag e.g. 'drake tag vers=1.0.0' creates tag 'v1.0.0'"
+  "Create Git version tag e.g. 'drake tag vers=1.0.0' creates tag 'v1.0.0'",
 );
-task("tag", ["test"], async function() {
+task("tag", ["test"], async function () {
   if (!env("vers")) {
     abort("'vers' variable not set e.g. drake tag vers=1.0.0");
   }
@@ -99,8 +99,9 @@ task("tag", ["test"], async function() {
   match = match as RegExpMatchArray;
   if (match[1] !== env("vers")) {
     console.log(
-      `WARNING: ${env("vers")} does not match version ${match
-        [1]} in ${RIMUC_TS}`
+      `WARNING: ${env(
+        "vers",
+      )} does not match version ${match[1]} in ${RIMUC_TS}`,
     );
   }
   const tag = `v${env("vers")}`;
@@ -109,7 +110,7 @@ task("tag", ["test"], async function() {
 });
 
 desc("Push changes to Github");
-task("push", ["test"], async function() {
+task("push", ["test"], async function () {
   await sh(`git push -u --tags origin master`);
 });
 

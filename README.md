@@ -6,7 +6,7 @@ A port of the [Rimu Markup language](https://srackham.github.io/rimu/) to the
 **NOTE**: This is a development release. A production release will follow once Deno has
 reached 1.0.
 If you experience compilation errors try forcing a cache reload
-with the Deno `fetch` command e.g. `deno fetch ./src/rimuc.ts --reload`
+with the Deno `fetch` command e.g. `deno fetch Drakefile.ts --reload`
 
 Tested with Deno 0.36.0 running on Ubuntu 18.04.
 
@@ -51,7 +51,7 @@ following example creates the executable `$HOME/.deno/bin/rimudeno`:
 
 Run it with e.g.
 
-    $HOME/.deno/bin/rimudeno --version
+    rimudeno --version
 
 
 ## Building
