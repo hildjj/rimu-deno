@@ -1,5 +1,11 @@
 # Rimu Markup for Deno
 
+___
+
+## **NOTE:** This project has merged with the Rimu TypeScript codebase and is no longer active.  Please visit https://github.com/srackham/rimu for the latest version of Rimu for Deno.
+
+___
+
 A port of the [Rimu Markup language](https://srackham.github.io/rimu/) to the
 [Deno](https://deno.land/) runtime.
 
